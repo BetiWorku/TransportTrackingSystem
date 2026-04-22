@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "802991968990",
+    "project_id": "transportation-tracker-app",
+    "storage_bucket": "transportation-tracker-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802991968990:android:b9ca0f023d75a0481b284f",
+        "android_client_info": {
+          "package_name": "com.example.transportationtrackerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAriK7OD7nejhp4_Db3tgpsnh0TuQhttHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802991968990:android:6ed57618313704741b284f",
+        "android_client_info": {
+          "package_name": "com.example.transporttrackingsystem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAriK7OD7nejhp4_Db3tgpsnh0TuQhttHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
