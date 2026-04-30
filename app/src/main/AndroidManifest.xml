@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -23,15 +24,41 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDuWcck4kzdIBozVhhE6Ftqt3GoBgOfMvc"/>
 
-        <!-- 🚀 LOGIN ACTIVITY (New Launcher) -->
+        <!-- 🚀 SPLASH SCREEN (New Launcher) -->
         <activity
-            android:name=".LoginActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TransportTrackingSystem">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="transportation-tracker-app.firebaseapp.com"
+                    android:pathPrefix="/__/auth/action" />
+            </intent-filter>
+        </activity>
+
+        <!-- 🚀 WELCOME PAGE -->
+        <activity android:name=".WelcomeActivity" />
 
         <!-- 🚀 REGISTER ACTIVITY -->
         <activity android:name=".RegisterActivity" />
@@ -39,9 +66,22 @@
         <!-- 🚀 MAIN MAP ACTIVITY -->
         <activity android:name=".MainActivity" />
 
+        <!-- 🚀 SETTINGS ACTIVITY -->
+        <activity android:name=".SettingsActivity" />
+
+        <!-- 🚀 BUS REGISTRATION ACTIVITY (Admin) -->
+        <activity android:name=".BusRegistrationActivity" />
+
+        <!-- 🚀 BUS DETAILS ACTIVITY -->
+        <activity android:name=".BusDetailsActivity" />
+
+        <!-- 🚀 NEWS ACTIVITY -->
+        <activity android:name=".UserNewsActivity" />
+
         <receiver android:name=".NotificationActionReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="ACTION_MUTE" />
+                <action android:name="ACTION_ALARM" />
             </intent-filter>
         </receiver>
 

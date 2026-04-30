@@ -61,6 +61,10 @@ dependencies {
     // 📍 LOCATION SERVICES
     implementation(libs.play.services.location)
 
+    // 📧 EMAIL SERVICES (JavaMail API)
+    implementation("com.sun.mail:android-mail:1.6.2")
+    implementation("com.sun.mail:android-activation:1.6.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

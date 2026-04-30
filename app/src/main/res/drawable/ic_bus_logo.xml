@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Premium Bus body with gradient -->
+    <path
+        android:pathData="M4,16C4,16.88 4.39,17.67 5,18.22L5,20A1,1 0 0,0 6,21H7A1,1 0 0,0 8,20V19H16V20A1,1 0 0,0 17,21H18A1,1 0 0,0 19,20V18.22C19.61,17.67 20,16.88 20,16V6C20,2 15.58,2 12,2C8.42,2 4,2 4,6V16Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="20"
+                android:endY="21"
+                android:startX="4"
+                android:startY="2"
+                android:type="linear">
+                <item android:offset="0" android:color="#5C6BC0" />
+                <item android:offset="1" android:color="#3F51B5" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    
+    <!-- Windows with light glass effect -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M6,7H11V12H6ZM13,7H18V12H13Z"/>
+    
+    <!-- Stylized Wheels -->
+    <path
+        android:fillColor="#212121"
+        android:pathData="M6.5,16.5m-1.5,0a1.5,1.5 0 1,0 3,0a1.5,1.5 0 1,0 -3,0"/>
+    <path
+        android:fillColor="#212121"
+        android:pathData="M17.5,16.5m-1.5,0a1.5,1.5 0 1,0 3,0a1.5,1.5 0 1,0 -3,0"/>
+    
+    <!-- Door line -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.5"
+        android:pathData="M12,12L12,17"/>
+</vector>

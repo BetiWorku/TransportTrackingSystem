@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,19 +41,66 @@ class RegisterActivity : AppCompatActivity() {
                             val userId = auth.currentUser?.uid
                             if (userId != null) {
                                 // 💾 Save User to Firestore
+                                val userRole = if (email.lowercase() == "bwwmas@gmail.com") "Admin" else "Commuter"
                                 val user = hashMapOf(
                                     "name" to name,
                                     "email" to email,
-                                    "role" to "Commuter" // Default role
+                                    "role" to userRole
                                 )
                                 db.collection("users").document(userId).set(user)
                                     .addOnSuccessListener {
-                                        startActivity(Intent(this, MainActivity::class.java))
-                                        finish()
+                                        // 📧 1. Send our custom HTML Welcome Email (Async)
+                                        Log.d("REGISTER", "Attempting to send welcome email to $email")
+                                        EmailHelper.sendWelcomeEmail(email, name)
+                                        
+                                        // ✅ Check if Admin to bypass verification and auto-login
+                                        if (email.lowercase() == "bwwmas@gmail.com") {
+                                            Log.d("REGISTER", "Admin detected: Bypassing verification.")
+                                            Toast.makeText(this, "Admin Registered! Welcome Betelhem.", Toast.LENGTH_LONG).show()
+                                            
+                                            val intent = Intent(this, WelcomeActivity::class.java)
+                                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                            startActivity(intent)
+                                            finish()
+                                        } else {
+                                            // ✅ 2. Send Firebase Verification Link for normal users
+                                            Log.d("REGISTER", "Requesting Firebase verification email for $email")
+                                            auth.currentUser?.sendEmailVerification()
+                                                ?.addOnCompleteListener { verifyTask ->
+                                                    if (verifyTask.isSuccessful) {
+                                                        Log.d("REGISTER", "Firebase verification email sent successfully.")
+                                                        Toast.makeText(this, "Registration successful! Please check your email ($email) to verify your account.", Toast.LENGTH_LONG).show()
+                                                    } else {
+                                                        val error = verifyTask.exception?.message ?: "Unknown error"
+                                                        Log.e("REGISTER", "Firebase verification failed: $error")
+                                                        Toast.makeText(this, "Registration successful, but verification email failed: $error", Toast.LENGTH_LONG).show()
+                                                    }
+                                                    
+                                                    // 🚪 Sign out immediately for normal users
+                                                    auth.signOut()
+
+                                                    // 🚀 Move back to Login Page
+                                                    val intent = Intent(this, LoginActivity::class.java)
+                                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
+                                        }
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(this, "Firestore Error: ${e.message}", Toast.LENGTH_LONG).show()
                                     }
                             }
                         } else {
-                            Toast.makeText(this, "Registration Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            val exception = task.exception
+                            val errorMsg = when (exception) {
+                                is com.google.firebase.auth.FirebaseAuthUserCollisionException -> 
+                                    "This email is already registered. Please login instead."
+                                is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> 
+                                    "The email address is badly formatted."
+                                else -> "Registration Failed: ${exception?.message}"
+                            }
+                            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
                         }
                     }
             } else {

@@ -17,39 +17,41 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottomNav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/topBar" />
 
         <!-- 🔝 Premium Top Header -->
         <LinearLayout
             android:id="@+id/topBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="@dimen/padding_small"
+            android:background="#FFFFFF"
+            android:elevation="@dimen/elevation_low"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Addis Transport"
-                android:textColor="#1A237E"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
+                
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSimulate"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Simulate"
-                android:textColor="#4CAF50"
-                app:icon="@android:drawable/ic_menu_rotate"
-                app:iconTint="#4CAF50" />
+                    
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Addis Transport"
+                    android:textColor="#1A237E"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
@@ -61,15 +63,162 @@
                 app:icon="@android:drawable/ic_lock_power_off"
                 app:iconTint="#F44336" />
         </LinearLayout>
+        
+        <!-- 📢 REAL-TIME TRAFFIC & DELAY ALERTS -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/trafficAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#FFF3E0"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toBottomOf="@id/topBar">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚠️"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/tvAlertMsg"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Heavy traffic near Megenagna. Expect 10 min delay."
+                    android:textColor="#E65100"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/btnCloseAlert"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:tint="#E65100" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 🚌 TRIP PROGRESS CARD (ONBOARD) -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/onboardCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#E8EAF6"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/trafficAlert">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView
+                        android:id="@+id/tvOnboardBusId"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Onboard: MEG-44-01"
+                        android:textColor="#1A237E"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFinishTrip"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Exit Bus"
+                        android:textColor="#D32F2F"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#1A000000"
+                    android:layout_marginVertical="8dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="NEXT STOP"
+                            android:textColor="#7986CB"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvOnboardNextStop"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lamberet"
+                            android:textColor="#1A237E"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvOnboardEta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4 mins"
+                            android:textColor="#43A047"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvOnboardDist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1.2 km away"
+                            android:textColor="#888888"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/tripProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:progress="45"
+                    app:indicatorColor="#3F51B5"
+                    app:trackColor="#D1D9FF"
+                    app:trackThickness="4dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- 📋 FLOATING STATUS CARD -->
         <androidx.cardview.widget.CardView
             android:id="@+id/statusCard"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="10dp"
+            android:layout_margin="@dimen/screen_margin_medium"
+            app:cardCornerRadius="@dimen/radius_large"
+            app:cardElevation="@dimen/elevation_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/topBar">
 
@@ -77,7 +226,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp"
+                android:padding="@dimen/padding_medium"
                 android:background="#F8F9FA">
 
                 <TextView
@@ -86,7 +235,7 @@
                     android:layout_height="wrap_content"
                     android:text="12 Buses"
                     android:textColor="#2196F3"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_medium"
                     android:textStyle="bold" />
 
                 <TextView
@@ -94,7 +243,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Locating..."
-                    android:textSize="10sp"
+                    android:textSize="@dimen/text_tiny"
                     android:textColor="#888888" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -104,9 +253,9 @@
             android:id="@+id/tripPlannerCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="25dp"
-            app:cardElevation="15dp"
+            android:layout_margin="@dimen/screen_margin_medium"
+            app:cardCornerRadius="@dimen/radius_xxlarge"
+            app:cardElevation="@dimen/elevation_high"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/statusCard">
@@ -115,64 +264,83 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:padding="@dimen/padding_xlarge"
                 android:background="@drawable/bg_white_gradient">
 
                 <TextView
+                    android:id="@+id/tvWhereTo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Where to?"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_xlarge"
                     android:textStyle="bold"
                     android:textColor="#333333"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_marginBottom="@dimen/padding_medium"/>
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/etFrom"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="@dimen/input_height"
                     android:background="@drawable/bg_input_field"
                     android:drawableStart="@android:drawable/ic_menu_myplaces"
-                    android:drawablePadding="12dp"
+                    android:drawablePadding="@dimen/padding_medium"
                     android:hint="Current Station"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="14sp" />
+                    android:paddingHorizontal="@dimen/padding_large"
+                    android:textColor="#000000"
+                    android:textColorHint="#757575"
+                    android:textSize="@dimen/text_medium"
+                    android:completionThreshold="1" />
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/etTo"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_height="@dimen/input_height"
+                    android:layout_marginTop="@dimen/padding_medium"
                     android:background="@drawable/bg_input_field"
                     android:drawableStart="@android:drawable/ic_menu_send"
-                    android:drawablePadding="12dp"
+                    android:drawablePadding="@dimen/padding_medium"
                     android:hint="Destination"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="14sp" />
+                    android:paddingHorizontal="@dimen/padding_large"
+                    android:textColor="#000000"
+                    android:textColorHint="#757575"
+                    android:textSize="@dimen/text_medium"
+                    android:completionThreshold="1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnPlanTrip"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginTop="@dimen/padding_large"
                     android:text="Find Fast Route"
                     android:textAllCaps="false"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_large"
                     android:textStyle="bold"
-                    app:cornerRadius="15dp"
+                    app:cornerRadius="@dimen/radius_medium"
                     android:backgroundTint="#3F51B5" />
 
                 <TextView
                     android:id="@+id/tvTripInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/padding_medium"
                     android:text="Select stations to see route info"
                     android:textColor="#5C6BC0"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/text_small"
                     android:visibility="gone" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#FFFFFF"
+            app:elevation="16dp"
+            app:itemIconTint="#3F51B5"
+            app:itemTextColor="#3F51B5"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- 🚌 NEARBY BUSES PANEL (Bottom Sheet) -->
@@ -180,30 +348,30 @@
         android:id="@+id/nearbyBusesSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="24dp"
-        app:behavior_peekHeight="120dp"
+        app:cardCornerRadius="@dimen/radius_xlarge"
+        app:cardElevation="@dimen/elevation_sheet"
+        app:behavior_peekHeight="@dimen/sheet_peek_height"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:minHeight="300dp">
+            android:padding="@dimen/padding_xlarge"
+            android:minHeight="@dimen/sheet_min_height">
 
             <View
                 android:layout_width="40dp"
                 android:layout_height="4dp"
                 android:layout_gravity="center_horizontal"
                 android:background="#DDDDDD"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="@dimen/padding_large"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nearby Buses"
-                android:textSize="20sp"
+                android:textSize="@dimen/text_xlarge"
                 android:textStyle="bold"
                 android:textColor="#333333"/>
 
@@ -211,7 +379,7 @@
                 android:id="@+id/rvBuses"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="@dimen/padding_large" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

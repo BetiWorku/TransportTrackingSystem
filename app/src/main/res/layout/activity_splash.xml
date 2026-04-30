@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/bg_splash_gradient"
+    android:padding="@dimen/text_display">
+
+    <!-- Animated Bus Logo -->
+    <ImageView
+        android:id="@+id/splashLogo"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:src="@drawable/ic_bus_logo"
+        android:contentDescription="Addis Transport Logo"
+        android:alpha="0"
+        android:scaleX="0.5"
+        android:scaleY="0.5" />
+
+    <!-- App Title -->
+    <TextView
+        android:id="@+id/splashTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_xxlarge"
+        android:text="@string/app_name"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/text_display"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:alpha="0"
+        android:letterSpacing="0.05" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/splashSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_small"
+        android:text="@string/app_subtitle"
+        android:textColor="#90CAF9"
+        android:textSize="@dimen/text_large"
+        android:alpha="0" />
+
+    <!-- Loading dots -->
+    <TextView
+        android:id="@+id/splashLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="@string/loading_dots"
+        android:textColor="#5C6BC0"
+        android:textSize="@dimen/text_medium"
+        android:alpha="0" />
+
+</LinearLayout>

@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">Transport Tracking System</string>
+    <string name="app_name">Addis Transport</string>
+    <string name="active_buses">Active Buses: %1$d</string>
+    <string name="trip_info">Trip: %1$.2f km \| Look for buses going to %2$s\n(Tap here to change route)</string>
+    <string name="traffic_delay">⚠️ Traffic Delay: Heavy congestion near %1$s. Expect +%2$d min delay.</string>
+    <string name="location_coords">%1$.4f, %2$.4f</string>
+    <string name="bus_arriving_soon">Bus Arriving Soon!</string>
+    <string name="trip_started">Trip Started 🚍</string>
+    <string name="boarded_msg">You have boarded %1$s! Enjoy your trip.</string>
+    <string name="arriving_msg">%1$s is arriving in %2$d mins! Head to the station.</string>
+    <string name="close_msg">%1$s is very close. Get ready!</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="enter_email_hint">Enter your registered email</string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
+    <string name="loading_dots">●  ●  ●</string>
+    <string name="app_subtitle">Real-Time Bus Tracking</string>
 </resources>

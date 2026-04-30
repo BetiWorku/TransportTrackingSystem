@@ -52,6 +52,53 @@
                 android:text="2.5 km away"
                 android:textColor="#9E9E9E"
                 android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                
+                <TextView
+                    android:id="@+id/tvBusType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Anbessa"
+                    android:background="#E3F2FD"
+                    android:textColor="#1976D2"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvPassengers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="18/30"
+                    android:textColor="#43A047"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvCurrentStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Current: Bole"
+                android:textColor="#333333"
+                android:textSize="11sp"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/tvNextStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next: Megenagna"
+                android:textColor="#757575"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <TextView
