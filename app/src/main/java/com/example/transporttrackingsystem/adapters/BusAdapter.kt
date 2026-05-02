@@ -1,5 +1,6 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.adapters
 
+import com.example.transporttrackingsystem.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,8 @@ data class BusInfo(
     val passengers: Int = 0,
     val capacity: Int = 30,
     val currentStop: String = "Unknown",
-    val nextStop: String = "Next Stop..."
+    val nextStop: String = "Next Stop...",
+    val distKm: Double = 0.0
 )
 
 class BusAdapter(private var buses: List<BusInfo>, private val onBusClick: (String) -> Unit) : RecyclerView.Adapter<BusAdapter.BusViewHolder>() {

@@ -1,4 +1,9 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.fragments
+
+import com.example.transporttrackingsystem.R
+import com.example.transporttrackingsystem.models.*
+import com.example.transporttrackingsystem.adapters.*
+import com.example.transporttrackingsystem.activities.*
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -28,7 +33,7 @@ class AdminDashboardFragment : Fragment() {
         val tvCapacity = view.findViewById<TextView>(R.id.tvTotalCapacity)
 
         adapter = AdminFleetAdapter(busList, 
-            onEdit = { bus -> Toast.makeText(context, "Editing ${bus.busId}", Toast.LENGTH_SHORT).show() },
+            onEdit = { bus -> showEditBusDialog(bus) },
             onDelete = { bus -> deleteBus(bus) }
         )
 
@@ -87,6 +92,39 @@ class AdminDashboardFragment : Fragment() {
     private fun deleteBus(bus: Bus) {
         db.collection("buses").document(bus.busId).delete()
             .addOnSuccessListener { Toast.makeText(context, "Bus Deleted", Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun showEditBusDialog(bus: Bus) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bus, null)
+        val etType = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.editBusType)
+        val etRoute = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.editRouteId)
+        val etTerminal = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.editTerminal)
+        val etDriver = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.editDriverName)
+        val etStatus = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.editStatus)
+
+        // Pre-fill
+        etType.setText(bus.busType)
+        etRoute.setText(bus.routeId)
+        etTerminal.setText(bus.terminal)
+        etDriver.setText(bus.driverName)
+        etStatus.setText(bus.status)
+
+        AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setPositiveButton("Update") { _, _ ->
+                val updates = hashMapOf<String, Any>(
+                    "busType" to etType.text.toString(),
+                    "routeId" to etRoute.text.toString(),
+                    "terminal" to etTerminal.text.toString(),
+                    "driverName" to etDriver.text.toString(),
+                    "status" to etStatus.text.toString()
+                )
+                db.collection("buses").document(bus.busId).update(updates)
+                    .addOnSuccessListener { Toast.makeText(context, "Bus Updated", Toast.LENGTH_SHORT).show() }
+                    .addOnFailureListener { e -> Toast.makeText(context, "Update failed: ${e.message}", Toast.LENGTH_SHORT).show() }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun wipeAllBuses() {

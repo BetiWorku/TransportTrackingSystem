@@ -1,4 +1,4 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.activities
 
 import android.content.Intent
 import com.example.transporttrackingsystem.R
@@ -77,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                     auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Toast.makeText(this, "Admin Authenticated!", Toast.LENGTH_SHORT).show()
-                            // 🚀 GO TO WELCOME SCREEN FIRST
+                            // 🚀 GO TO WELCOME SCREEN
                             val intent = Intent(this, WelcomeActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
@@ -97,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
                             val userEmail = user?.email?.lowercase() ?: ""
                             
                             if (user?.isEmailVerified == true || userEmail == "bwwmas@gmail.com") {
-                                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                                // GO TO WELCOME SCREEN
                                 startActivity(Intent(this, WelcomeActivity::class.java))
                                 finish()
                             } else {

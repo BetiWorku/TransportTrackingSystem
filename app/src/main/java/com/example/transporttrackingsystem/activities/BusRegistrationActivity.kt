@@ -1,4 +1,7 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.activities
+
+import com.example.transporttrackingsystem.R
+import com.example.transporttrackingsystem.fragments.*
 
 import android.content.Intent
 import android.os.Bundle

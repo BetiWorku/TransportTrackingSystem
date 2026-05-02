@@ -1,4 +1,4 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.models
 
 import com.google.firebase.Timestamp
 

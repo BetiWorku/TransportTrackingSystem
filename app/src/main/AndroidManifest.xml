@@ -26,7 +26,7 @@
 
         <!-- 🚀 SPLASH SCREEN (New Launcher) -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.TransportTrackingSystem">
             <intent-filter>
@@ -36,15 +36,15 @@
         </activity>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="false" />
 
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name=".activities.ForgotPasswordActivity"
             android:exported="false" />
 
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".activities.ResetPasswordActivity"
             android:exported="true">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -58,27 +58,27 @@
         </activity>
 
         <!-- 🚀 WELCOME PAGE -->
-        <activity android:name=".WelcomeActivity" />
+        <activity android:name=".activities.WelcomeActivity" />
 
         <!-- 🚀 REGISTER ACTIVITY -->
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".activities.RegisterActivity" />
 
         <!-- 🚀 MAIN MAP ACTIVITY -->
-        <activity android:name=".MainActivity" />
+        <activity android:name=".activities.MainActivity" />
 
         <!-- 🚀 SETTINGS ACTIVITY -->
-        <activity android:name=".SettingsActivity" />
+        <activity android:name=".activities.SettingsActivity" />
 
         <!-- 🚀 BUS REGISTRATION ACTIVITY (Admin) -->
-        <activity android:name=".BusRegistrationActivity" />
+        <activity android:name=".activities.BusRegistrationActivity" />
 
         <!-- 🚀 BUS DETAILS ACTIVITY -->
-        <activity android:name=".BusDetailsActivity" />
+        <activity android:name=".activities.BusDetailsActivity" />
 
         <!-- 🚀 NEWS ACTIVITY -->
-        <activity android:name=".UserNewsActivity" />
+        <activity android:name=".activities.UserNewsActivity" />
 
-        <receiver android:name=".NotificationActionReceiver" android:exported="false">
+        <receiver android:name=".utils.NotificationActionReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="ACTION_MUTE" />
                 <action android:name="ACTION_ALARM" />

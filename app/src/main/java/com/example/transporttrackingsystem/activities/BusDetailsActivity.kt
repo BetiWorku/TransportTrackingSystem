@@ -1,4 +1,7 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.activities
+
+import com.example.transporttrackingsystem.R
+import com.example.transporttrackingsystem.models.*
 
 import android.os.Bundle
 import android.widget.Button

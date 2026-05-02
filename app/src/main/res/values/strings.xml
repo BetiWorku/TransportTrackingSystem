@@ -16,4 +16,12 @@
     <string name="cancel">Cancel</string>
     <string name="loading_dots">●  ●  ●</string>
     <string name="app_subtitle">Real-Time Bus Tracking</string>
+    <string name="time_format_ms">%1$dm %2$ds</string>
+    <string name="time_format_s">%1$ds</string>
+    <string name="arriving_now">Arriving...</string>
+    <string name="dist_meters">%1$d m</string>
+    <string name="dist_km">%1$.2f km</string>
+    <string name="dist_to_stop">%1$s to %2$s</string>
+    <string name="onboard_label">Onboard: %1$s</string>
+    <string name="trip_distance_time">Distance: %1$.1f km | Est. Travel Time: %2$d mins</string>
 </resources>

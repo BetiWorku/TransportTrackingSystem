@@ -1,4 +1,8 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.fragments
+
+import com.example.transporttrackingsystem.R
+import com.example.transporttrackingsystem.models.*
+import com.example.transporttrackingsystem.adapters.*
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -48,11 +52,17 @@ class TerminalsFragment : Fragment() {
                 stopOrder = etOrder.text.toString().toIntOrNull() ?: 0
             )
             if (stop.stopName.isNotEmpty() && stop.routeId.isNotEmpty()) {
+                if (stop.latitude == 0.0 || stop.longitude == 0.0) {
+                    Toast.makeText(context, "Please provide valid coordinates (Latitude/Longitude)!", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
                 db.collection("stops").document(stop.stopId).set(stop)
                     .addOnSuccessListener { 
                         Toast.makeText(context, "Stop Added", Toast.LENGTH_SHORT).show()
                         etName.text.clear(); etLat.text.clear(); etLng.text.clear(); etOrder.text.clear()
                     }
+            } else {
+                Toast.makeText(context, "Please fill all fields!", Toast.LENGTH_SHORT).show()
             }
         }
 

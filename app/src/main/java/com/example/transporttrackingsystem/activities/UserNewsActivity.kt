@@ -1,4 +1,8 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.activities
+
+import com.example.transporttrackingsystem.R
+import com.example.transporttrackingsystem.models.*
+import com.example.transporttrackingsystem.adapters.*
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -1,4 +1,6 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.utils
+
+import com.example.transporttrackingsystem.activities.MainActivity
 
 import android.content.BroadcastReceiver
 import android.content.Context

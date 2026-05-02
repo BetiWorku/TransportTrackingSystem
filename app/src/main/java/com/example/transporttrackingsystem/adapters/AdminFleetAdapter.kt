@@ -1,5 +1,7 @@
-package com.example.transporttrackingsystem
+package com.example.transporttrackingsystem.adapters
 
+import com.example.transporttrackingsystem.R
+import com.example.transporttrackingsystem.models.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
