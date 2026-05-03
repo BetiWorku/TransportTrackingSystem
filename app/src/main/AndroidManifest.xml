@@ -78,6 +78,9 @@
         <!-- 🚀 NEWS ACTIVITY -->
         <activity android:name=".activities.UserNewsActivity" />
 
+        <!-- 🚀 BUS TRACKER ACTIVITY -->
+        <activity android:name=".activities.BusTrackerActivity" />
+
         <receiver android:name=".utils.NotificationActionReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="ACTION_MUTE" />

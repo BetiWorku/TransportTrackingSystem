@@ -12,16 +12,22 @@ data class BusInfo(
     val destination: String, 
     val distance: String, 
     val eta: String, 
-    val sortSecs: Int = Int.MAX_VALUE,
+    var sortSecs: Int = Int.MAX_VALUE,
     val type: String = "City Bus",
     val passengers: Int = 0,
     val capacity: Int = 30,
     val currentStop: String = "Unknown",
     val nextStop: String = "Next Stop...",
-    val distKm: Double = 0.0
+    var distKm: Double = 0.0,
+    val totalDist: String = "",
+    val totalEta: String = ""
 )
 
-class BusAdapter(private var buses: List<BusInfo>, private val onBusClick: (String) -> Unit) : RecyclerView.Adapter<BusAdapter.BusViewHolder>() {
+class BusAdapter(
+    private var buses: List<BusInfo>, 
+    private val onBusClick: (String) -> Unit,
+    private val onTrackClick: (String) -> Unit
+) : RecyclerView.Adapter<BusAdapter.BusViewHolder>() {
 
     class BusViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val busName: TextView = view.findViewById(R.id.busName)
@@ -32,6 +38,7 @@ class BusAdapter(private var buses: List<BusInfo>, private val onBusClick: (Stri
         val busPassengers: TextView = view.findViewById(R.id.tvPassengers)
         val tvCurrentStop: TextView = view.findViewById(R.id.tvCurrentStop)
         val tvNextStop: TextView = view.findViewById(R.id.tvNextStop)
+        val btnTrackLive: TextView = view.findViewById(R.id.btnItemTrackLive)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BusViewHolder {
@@ -43,8 +50,8 @@ class BusAdapter(private var buses: List<BusInfo>, private val onBusClick: (Stri
         val bus = buses[position]
         holder.busName.text = bus.id
         holder.busDestination.text = "To: ${bus.destination}"
-        holder.busDistance.text = bus.distance
-        holder.busEta.text = bus.eta
+        holder.busDistance.text = if (bus.totalDist.isNotEmpty()) "${bus.distance} (${bus.totalDist} to Dest)" else bus.distance
+        holder.busEta.text = if (bus.totalEta.isNotEmpty()) "${bus.eta}\nTotal: ${bus.totalEta}" else bus.eta
         holder.busType.text = bus.type
         holder.busPassengers.text = "${bus.passengers}/${bus.capacity}"
         holder.tvCurrentStop.text = "At: ${bus.currentStop}"
@@ -57,6 +64,7 @@ class BusAdapter(private var buses: List<BusInfo>, private val onBusClick: (Stri
         }
 
         holder.itemView.setOnClickListener { onBusClick(bus.id) }
+        holder.btnTrackLive.setOnClickListener { onTrackClick(bus.id) }
     }
 
     override fun getItemCount() = buses.size

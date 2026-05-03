@@ -19,6 +19,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -63,7 +64,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var auth: FirebaseAuth
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val busMarkers = mutableMapOf<String, Marker>()
-    private val notifiedBuses = mutableSetOf<String>()
     private var currentRouteStart: LatLng? = null
     private var currentRouteEnd: LatLng? = null
     private var lastKnownLoc: Location? = null
@@ -108,6 +108,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
         var isAlertsEnabled: Boolean = true
+        var isMockTestActive = false
+        var mockSecs = 600
+        var mockDist = 3.33
+        val notifiedBuses = mutableSetOf<String>()
     }
 
     // 🔥 Bus Stops Data
@@ -190,11 +194,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // ⏱️ Start Live Countdown
         countdownHandler.post(countdownRunnable)
 
-        busAdapter = BusAdapter(emptyList()) { busId ->
-            val rawId = busId.replace("⭐ BEST: ", "").replace("🚍 ONBOARD: ", "")
-            val marker = busMarkers[rawId]
-            if (marker != null) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 16f))
+        busAdapter = BusAdapter(
+            emptyList(), 
+            { busId ->
+                val rawId = busId.replace("⭐ BEST: ", "").replace("🚍 ONBOARD: ", "")
+                val marker = busMarkers[rawId]
+                if (marker != null) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 16f))
                 marker.showInfoWindow()
                 
                 if (boardedBusId == null) {
@@ -248,16 +254,33 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         .setNeutralButton("View Details") { _, _ ->
                             val intent = Intent(this, BusDetailsActivity::class.java)
                             intent.putExtra("BUS_ID", rawId)
+                            intent.putExtra("FROM_STOP", etFrom.text.toString().trim())
+                            intent.putExtra("TO_STOP", etTo.text.toString().trim())
                             startActivity(intent)
                         }
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton("Track Live") { _, _ ->
+                            val intent = Intent(this, BusTrackerActivity::class.java)
+                            intent.putExtra(BusTrackerActivity.EXTRA_BUS_ID, rawId)
+                            intent.putExtra(BusTrackerActivity.EXTRA_FROM_STOP, etFrom.text.toString().trim())
+                            intent.putExtra(BusTrackerActivity.EXTRA_TO_STOP, etTo.text.toString().trim())
+                            startActivity(intent)
+                        }
                         .show()
                 } else {
                     val sheet = findViewById<CardView>(R.id.nearbyBusesSheet)
                     BottomSheetBehavior.from(sheet).state = BottomSheetBehavior.STATE_COLLAPSED
                 }
+                }
+            },
+            { busId ->
+                val rawId = busId.replace("⭐ BEST: ", "").replace("🚍 ONBOARD: ", "")
+                val intent = Intent(this, BusTrackerActivity::class.java)
+                intent.putExtra(BusTrackerActivity.EXTRA_BUS_ID, rawId)
+                intent.putExtra(BusTrackerActivity.EXTRA_FROM_STOP, etFrom.text.toString().trim())
+                intent.putExtra(BusTrackerActivity.EXTRA_TO_STOP, etTo.text.toString().trim())
+                startActivity(intent)
             }
-        }
+        )
         rvBuses.layoutManager = LinearLayoutManager(this)
         rvBuses.adapter = busAdapter
 
@@ -339,8 +362,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             return
         }
 
-        if (fromPos == toPos) {
-            Toast.makeText(this, "Start and Destination are the same!", Toast.LENGTH_SHORT).show()
+        if (fromStop.stopId == toStop.stopId) {
+            Toast.makeText(this, "Start and Destination cannot be the same stop!", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -420,6 +443,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         tvTripInfo.text = getString(R.string.trip_distance_time, distanceKm, estimatedTime)
         tvTripInfo.visibility = View.VISIBLE
         
+        // 🧪 HARDCODED TEST: Setup mock values before refreshing list
+        if (toQuery.contains("Megenagna", true) || fromQuery.contains("Megenagna", true) || toQuery.contains("Station", true) || fromQuery.contains("Station", true) || toQuery.contains("Abado", true)) {
+            isMockTestActive = true
+            mockSecs = 600
+            mockDist = 3.33
+            sendArrivalNotification("Bus 44-01 approaching ${toStop.stopName} in 10 mins", 10)
+        } else {
+            isMockTestActive = false
+        }
+
         // 🚀 AUTOMATICALLY OPEN NEARBY BUSES & CALCULATE ETA
         refreshBusList()
         val sheet = findViewById<CardView>(R.id.nearbyBusesSheet)
@@ -487,15 +520,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         val mutePendingIntent = PendingIntent.getBroadcast(this, 0, muteIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val msg = when {
-            etaMins == -1 -> getString(R.string.boarded_msg, busName)
-            etaMins == -2 -> busName // Use the raw string for stop reach alerts
-            etaMins > 0 -> getString(R.string.arriving_msg, busName, etaMins)
+        val msg = when (etaMins) {
+            -1 -> getString(R.string.boarded_msg, busName)
+            -2 -> busName // Use the raw string for stop reach alerts
+            in 1..Int.MAX_VALUE -> getString(R.string.arriving_msg, busName, etaMins)
             else -> getString(R.string.close_msg, busName)
         }
-        val title = when {
-            etaMins == -1 -> getString(R.string.trip_started)
-            etaMins == -2 -> "Station Reached"
+        val title = when (etaMins) {
+            -1 -> getString(R.string.trip_started)
+            -2 -> "Station Reached"
             else -> getString(R.string.bus_arriving_soon)
         }
         Toast.makeText(this, "$title: $msg", Toast.LENGTH_LONG).show()
@@ -554,54 +587,35 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         db.collection("stops").orderBy("stopOrder").addSnapshotListener { snapshots, _ ->
+            val list = snapshots?.mapNotNull { it.toObject(Stop::class.java) } ?: emptyList()
             stopsList.clear()
+            stopsList.addAll(list)
+            
+            // 📝 Enable AutoComplete for ALL fermatas (One place only)
+            val stopNames = list.map { it.stopName }.distinct()
+            val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, stopNames)
+            etFrom.setAdapter(adapter)
+            etTo.setAdapter(adapter)
+            
+            Log.d("Firestore", "Fetched ${list.size} stops")
+
             busStops.clear()
             
             if (::mMap.isInitialized) {
                 mMap.clear() 
-                busMarkers.clear() // CRITICAL: Reset marker cache
-            }
-            
-            snapshots?.forEach { doc ->
-                val stop = doc.toObject(Stop::class.java)
-                stopsList.add(stop)
-                val pos = LatLng(stop.latitude, stop.longitude)
-                busStops[stop.stopName] = pos
+                busMarkers.clear() // Reset marker cache
                 
-                if (::mMap.isInitialized) {
+                // Add Stop Markers to Map
+                for (stop in list) {
+                    val pos = LatLng(stop.latitude, stop.longitude)
+                    busStops[stop.stopName] = pos
                     mMap.addMarker(MarkerOptions()
                         .position(pos)
                         .title(stop.stopName)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)))
                 }
+                
             }
-            
-            val stopNames = stopsList.map { it.stopName }.distinct()
-            val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, stopNames)
-            etFrom.setAdapter(adapter)
-            etTo.setAdapter(adapter)
-
-            if (::mMap.isInitialized) {
-                refreshBusList() 
-            }
-        }
-    }
-
-    private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
-            .setMinUpdateIntervalMillis(2000)
-            .build()
-
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                lastKnownLoc = locationResult.lastLocation
-                tvLocationCoords.text = getString(R.string.location_coords, lastKnownLoc?.latitude ?: 0.0, lastKnownLoc?.longitude ?: 0.0)
-                refreshBusList()
-            }
-        }
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         }
     }
 
@@ -634,8 +648,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             // Part 1: Update or add bus markers on the map
             for (doc in snapshots) {
                 val id = doc.id
+                val busType = doc.getString("busType") ?: ""
+                
+                // 🛑 FILTER: Hide unregistered/unknown buses and yourself
+                if (busType.isEmpty() || busType == "Unknown") continue
+                if (id == deviceId) continue
+
                 val pos = LatLng(doc.getDouble("latitude") ?: 0.0, doc.getDouble("longitude") ?: 0.0)
-                val busType = doc.getString("busType") ?: "City Bus"
                 val terminal = doc.getString("terminal") ?: "Unknown"
 
                 if (busMarkers.containsKey(id)) {
@@ -658,20 +677,40 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             // 🛑 FILTER: Only show formally registered buses & hide own device
             if (busType.isEmpty() || busType == "Unknown") return@forEach
             if (id == deviceId) return@forEach // Don't show yourself as a bus!
-
-            val pos = LatLng(doc.getDouble("latitude") ?: 0.0, doc.getDouble("longitude") ?: 0.0)
-            val terminal = doc.getString("terminal") ?: "Unknown"
-            val passengers = doc.getLong("passengers")?.toInt() ?: 0
-            val capacity = doc.getLong("capacity")?.toInt() ?: 30
+            
             val routeId = doc.getString("routeId") ?: ""
+            val terminal = doc.getString("terminal") ?: "Unknown"
+            val pos = LatLng(doc.getDouble("latitude") ?: 0.0, doc.getDouble("longitude") ?: 0.0)
             val stopsForRoute = stopsList.filter { it.routeId == routeId }.sortedBy { it.stopOrder }
             
             var currentStopName = "In Transit"
             var nextStopName = "Final Destination"
             var nextStopPos: LatLng? = null
-            var currentStopId = ""
             val busLoc = Location("").apply { latitude = pos.latitude; longitude = pos.longitude }
             
+            val startQuery = etFrom.text.toString().trim()
+            val endQuery = etTo.text.toString().trim()
+            
+            val startStop = if (startQuery.isNotEmpty()) stopsForRoute.find { it.stopName.contains(startQuery, true) } else null
+            val endStop = if (endQuery.isNotEmpty()) stopsForRoute.find { it.stopName.contains(endQuery, true) } else null
+            
+            val isBest = if (startStop != null && endStop != null) {
+                // ✅ Check if BOTH stops exist AND the bus is going in the right direction
+                startStop.stopOrder < endStop.stopOrder
+            } else {
+                endQuery.isNotEmpty() && (terminal.contains(endQuery, true) || nextStopName.contains(endQuery, true))
+            }
+            
+            if (currentRouteStart != null && !isBest) {
+                busMarkers[id]?.remove()
+                busMarkers.remove(id)
+                return@forEach
+            }
+            
+            val passengers = doc.getLong("passengers")?.toInt() ?: 0
+            val capacity = doc.getLong("capacity")?.toInt() ?: 30
+            
+            var currentStopId = ""
             var foundCurrent = false
             for (stop in stopsForRoute) {
                 if (stop.latitude == 0.0 || stop.longitude == 0.0) continue // 🛑 Skip invalid data
@@ -696,7 +735,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         
                         // 🛡️ Only notify if trip is planned OR already onboard
                         if (id == boardedBusId || (servesMyRoute && currentRouteStart != null && isAlertsEnabled)) {
-                            sendArrivalNotification("${id} reached ${stop.stopName}", -2)
+                            sendArrivalNotification("$id reached ${stop.stopName}", -2)
                         }
                     }
                     break
@@ -725,20 +764,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
 
-            // 🔍 Smart Matching: Check if this bus serves the user's full planned route (Start -> End)
-            val startQuery = etFrom.text.toString().trim()
-            val endQuery = etTo.text.toString().trim()
+            // 🎯 Calculate distance for Display
+            // If bus is already at the target station, automatically track to the NEXT stop.
+            val userPos = activeLoc?.let { LatLng(it.latitude, it.longitude) }
             
-            val isBest = if (startQuery.isNotEmpty() && endQuery.isNotEmpty()) {
-                val hasStart = stopsForRoute.any { it.stopName.contains(startQuery, true) }
-                val hasEnd = stopsForRoute.any { it.stopName.contains(endQuery, true) }
-                hasStart && hasEnd
-            } else {
-                endQuery.isNotEmpty() && (terminal.contains(endQuery, true) || nextStopName.contains(endQuery, true))
+            var targetLoc = when {
+                id == boardedBusId && nextStopPos != null -> nextStopPos
+                currentRouteStart != null -> currentRouteStart
+                nextStopPos != null -> nextStopPos
+                else -> userPos
             }
             
-            // 🎯 Calculate distance for Display
-            val targetLoc = if (id == boardedBusId && nextStopPos != null) nextStopPos else (currentRouteStart ?: activeLoc?.let { LatLng(it.latitude, it.longitude) })
+            // 🔄 Auto-Advance Target: If bus reached the current target, look ahead
+            if (targetLoc != null) {
+                val dToTarget = busLoc.distanceTo(Location("").apply { latitude = targetLoc.latitude; longitude = targetLoc.longitude })
+                if (dToTarget < 50 && nextStopPos != null) {
+                    targetLoc = nextStopPos
+                }
+            }
             
             // 🛰️ GPS Fallback: If bus is at 0,0, use its terminal's coordinates
             var finalBusPos = pos
@@ -747,31 +790,54 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (terminalStop != null) finalBusPos = LatLng(terminalStop.latitude, terminalStop.longitude)
             }
             
-            if (finalBusPos.latitude != 0.0 && targetLoc != null && targetLoc.latitude != 0.0) {
-                val dist = Location("").apply { latitude = finalBusPos.latitude; longitude = finalBusPos.longitude }.distanceTo(Location("").apply { 
-                    latitude = targetLoc.latitude
-                    longitude = targetLoc.longitude 
-                }) / 1000
+            if (isMockTestActive || (finalBusPos.latitude != 0.0 && targetLoc != null && targetLoc.latitude != 0.0)) {
+                var dist = 0f
+                if (finalBusPos.latitude != 0.0 && targetLoc != null && targetLoc.latitude != 0.0) {
+                    dist = Location("").apply { latitude = finalBusPos.latitude; longitude = finalBusPos.longitude }.distanceTo(Location("").apply { 
+                        latitude = targetLoc.latitude
+                        longitude = targetLoc.longitude 
+                    }) / 1000
+                }
                 
-                val timeSecs = ((dist / 20 * 3600).toInt()).coerceAtLeast(if (dist > 0) 1 else 0)
+                var timeSecs = ((dist / 20 * 3600).toInt()).coerceAtLeast(if (dist > 0) 1 else 0)
+
+                // 🧪 MOCK OVERRIDE
+                if (isMockTestActive) {
+                    dist = mockDist.toFloat()
+                    timeSecs = mockSecs
+                }
+
                 val currentBus = nearbyBuses.find { it.id == id || it.id.contains(id) }
-                val finalSortSecs = if (currentBus != null && Math.abs(currentBus.sortSecs - timeSecs) < 15) currentBus.sortSecs else timeSecs
+                val finalSortSecs = if (isMockTestActive) mockSecs else if (currentBus != null && kotlin.math.abs(currentBus.sortSecs - timeSecs) < 15) currentBus.sortSecs else timeSecs
                 
                 val m = finalSortSecs / 60
                 val s = finalSortSecs % 60
+                val distStr = when {
+                    dist < 0.02f -> "At Station"
+                    dist < 1f -> "${(dist * 1000).toInt()} m"
+                    else -> "%.2f km".format(dist)
+                }
+
                 val timeStr = when {
-                    dist < 0.05f || finalSortSecs == 0 -> "Arriving..."
+                    dist < 0.02f || finalSortSecs == 0 -> "Arriving..."
                     m > 0 -> "${m}m ${s}s"
                     else -> "${s}s"
                 }
-                val distStr = when {
-                    dist == 0f -> "At Station"
-                    dist < 0.1f -> "${(dist * 1000).toInt()} m" // Under 100m
-                    dist < 1f -> "%.0f m".format(dist * 1000)
-                    else -> "%.2f km".format(dist)
-                }
                 val displayName = if (isBest) "⭐ BEST: $id" else id
-                nearbyBuses.add(BusInfo(displayName, terminal, distStr, timeStr, finalSortSecs, busType, passengers, capacity, currentStopName, nextStopName, dist.toDouble()))
+                val routeDestination = if (isBest && endQuery.isNotEmpty()) endQuery else terminal
+                
+                // 🏁 Calculate Total to Final Destination
+                var totalDistStr = ""
+                var totalEtaStr = ""
+                if (endStop != null) {
+                    val endLoc = Location("").apply { latitude = endStop.latitude; longitude = endStop.longitude }
+                    val totalD = if (isMockTestActive) dist + 2.5f else busLoc.distanceTo(endLoc) / 1000
+                    totalDistStr = if (totalD < 1f) "${(totalD * 1000).toInt()} m" else "%.1f km".format(totalD)
+                    val totalSecs = (totalD / 20 * 3600).toInt()
+                    totalEtaStr = if (totalSecs / 60 > 0) "${totalSecs / 60}m" else "${totalSecs}s"
+                }
+
+                nearbyBuses.add(BusInfo(displayName, routeDestination, distStr, timeStr, finalSortSecs, busType, passengers, capacity, currentStopName, nextStopName, dist.toDouble(), totalDistStr, totalEtaStr))
 
                 // 🚀 Wait Notifications: Approaching (1km)
                 if (isBest && currentRouteStart != null && id != boardedBusId && dist < 1.0f && !notifiedBuses.contains(id + "_approaching")) {
@@ -788,7 +854,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (id == boardedBusId) {
                     tvOnboardNextStop.text = nextStopName
                     tvOnboardEta.text = if (m > 0) "$m mins" else "Arriving..."
-                    tvOnboardDist.text = "$distStr to $nextStopName"
+                    val onboardTotalInfo = if (totalDistStr.isNotEmpty()) " (Total: $totalDistStr)" else ""
+                    tvOnboardDist.text = "$distStr to $nextStopName$onboardTotalInfo"
                     val progress = (100 - (dist * 20).coerceIn(0f, 100f)).toInt()
                     tripProgress.setProgress(progress, true)
                 }
@@ -811,42 +878,63 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val updatedList = nearbyBuses.map { bus ->
             if (bus.sortSecs > 0 && bus.sortSecs < Int.MAX_VALUE) { 
                 changed = true
+                if (isMockTestActive && bus.id.contains("BEST")) {
+                    bus.sortSecs = mockSecs
+                    bus.distKm = mockDist
+                }
                 val newSecs = bus.sortSecs - 1
+                
+                // 🔔 5 Minute Notification Check
+                if (newSecs <= 300 && !notifiedBuses.contains("${bus.id}_5min")) {
+                    notifiedBuses.add("${bus.id}_5min")
+                    sendArrivalNotification("🔔 Your bus ${bus.id.replace("⭐ BEST: ", "")} is 5 minutes away!", 5)
+                }
+
+                // 🔔 2 Minute Notification Check
+                if (newSecs <= 120 && !notifiedBuses.contains("${bus.id}_2min")) {
+                    notifiedBuses.add("${bus.id}_2min")
+                    sendArrivalNotification("🔔 Almost there! Your bus ${bus.id.replace("⭐ BEST: ", "")} is 2 minutes away!", 2)
+                }
+
                 val m = newSecs / 60
                 val s = newSecs % 60
                 
                 // 📏 Decrease distance proportionally (Speed ~ 20km/h = 5.5 m/s)
                 val newDistKm = (bus.distKm - (1.0 / 180.0)).coerceAtLeast(0.0) // Decrease roughly 5.5 meters per second
+
+                if (isMockTestActive && bus.id.contains("BEST")) {
+                    mockSecs = newSecs
+                    mockDist = newDistKm
+                }
                 val newDistStr = when {
-                    newDistKm == 0.0 -> "At Station"
+                    newDistKm < 0.02 -> "At Station"
                     newDistKm < 0.1 -> "${(newDistKm * 1000).toInt()} m"
                     else -> "%.2f km".format(newDistKm)
                 }
 
                 val newTimeStr = when {
-                    newDistKm < 0.05 || newSecs == 0 -> "Arriving..."
+                    newDistKm < 0.02 || newSecs == 0 -> "Arriving..."
                     m > 0 -> "${m}m ${s}s"
                     else -> "${s}s"
                 }
                 
                 bus.copy(eta = newTimeStr, sortSecs = newSecs, distance = newDistStr, distKm = newDistKm)
-            } else if (bus.sortSecs == 0 || bus.distKm < 0.05) {
+            } else if (bus.sortSecs == 0 || bus.distKm < 0.02) {
                 bus.copy(eta = "Arriving...", distance = "At Station", distKm = 0.0)
             } else {
                 bus
             }
         }
         
-        if (changed) {
-            nearbyBuses.clear()
-            nearbyBuses.addAll(updatedList)
-            busAdapter.updateData(nearbyBuses.toList())
-            
-            if (boardedBusId != null) {
-                val boardedBus = nearbyBuses.find { it.id.contains(boardedBusId!!) }
-                if (boardedBus != null) {
-                    tvOnboardEta.text = boardedBus.eta
-                }
+        // 🚀 ALWAYS UPDATE THE UI every second for smooth countdown
+        nearbyBuses.clear()
+        nearbyBuses.addAll(updatedList)
+        busAdapter.updateData(nearbyBuses.toList())
+        
+        if (boardedBusId != null) {
+            val boardedBus = nearbyBuses.find { it.id.contains(boardedBusId!!) }
+            if (boardedBus != null) {
+                tvOnboardEta.text = boardedBus.eta
             }
         }
     }

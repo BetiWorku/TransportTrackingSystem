@@ -3,6 +3,7 @@ package com.example.transporttrackingsystem.activities
 import com.example.transporttrackingsystem.R
 import com.example.transporttrackingsystem.models.*
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
@@ -34,8 +35,20 @@ class BusDetailsActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val btnTrack = findViewById<Button>(R.id.btnTrackOnMap)
 
+        val fromStop = intent.getStringExtra("FROM_STOP") ?: ""
+        val toStop   = intent.getStringExtra("TO_STOP")   ?: ""
+
         btnBack.setOnClickListener { finish() }
-        btnTrack.setOnClickListener { finish() } // Simply go back to map
+        btnTrack.setOnClickListener {
+            if (busId != null) {
+                val intent = Intent(this, BusTrackerActivity::class.java).apply {
+                    putExtra(BusTrackerActivity.EXTRA_BUS_ID,    busId)
+                    putExtra(BusTrackerActivity.EXTRA_FROM_STOP, fromStop)
+                    putExtra(BusTrackerActivity.EXTRA_TO_STOP,   toStop)
+                }
+                startActivity(intent)
+            }
+        }
 
         if (busId != null) {
             tvBusId.text = busId
