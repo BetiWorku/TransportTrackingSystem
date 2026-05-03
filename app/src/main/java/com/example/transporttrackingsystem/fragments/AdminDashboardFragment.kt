@@ -21,7 +21,9 @@ class AdminDashboardFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var adapter: AdminFleetAdapter
+    private val allBuses = mutableListOf<Bus>()
     private val busList = mutableListOf<Bus>()
+    private var showingAllBuses = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_admin_dashboard, container, false)
@@ -40,6 +42,13 @@ class AdminDashboardFragment : Fragment() {
         rvFleet.layoutManager = LinearLayoutManager(context)
         rvFleet.adapter = adapter
 
+        val tvViewAllBuses = view.findViewById<TextView>(R.id.tvViewAllBuses)
+        tvViewAllBuses.setOnClickListener {
+            showingAllBuses = !showingAllBuses
+            tvViewAllBuses.text = if (showingAllBuses) "Show Less" else "View All"
+            updateBusListUI()
+        }
+
         fetchFleetData(tvTotal, tvActive, tvCapacity)
 
         view.findViewById<View>(R.id.fabAddBus).setOnClickListener {
@@ -53,45 +62,60 @@ class AdminDashboardFragment : Fragment() {
             }
         }
 
-        view.findViewById<View>(R.id.btnWipeFleet).setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Wipe Fleet Data")
-                .setMessage("Are you sure you want to remove ALL buses from the system? This cannot be undone.")
-                .setPositiveButton("Wipe All") { _, _ -> wipeAllBuses() }
-                .setNegativeButton("Cancel", null)
-                .show()
-        }
 
         return view
+    }
+
+    private fun updateBusListUI() {
+        busList.clear()
+        if (showingAllBuses) {
+            busList.addAll(allBuses)
+        } else {
+            busList.addAll(allBuses.take(3))
+        }
+        adapter.notifyDataSetChanged()
     }
 
     private fun fetchFleetData(tvTotal: TextView, tvActive: TextView, tvCapacity: TextView) {
         db.collection("buses").addSnapshotListener { snapshot, e ->
             if (e != null || snapshot == null) return@addSnapshotListener
 
-            busList.clear()
+            allBuses.clear()
             var totalCap = 0
             var activeCount = 0
 
             for (doc in snapshot.documents) {
-                val bus = doc.toObject(Bus::class.java)
+                val bus = doc.toObject(Bus::class.java)?.copy(busId = doc.id)
                 if (bus != null) {
-                    busList.add(bus)
+                    allBuses.add(bus)
                     totalCap += bus.capacity
                     if (bus.status == "Active") activeCount++
                 }
             }
 
-            tvTotal.text = busList.size.toString()
+            tvTotal.text = allBuses.size.toString()
             tvActive.text = activeCount.toString()
             tvCapacity.text = totalCap.toString()
-            adapter.notifyDataSetChanged()
+            
+            updateBusListUI()
         }
     }
 
     private fun deleteBus(bus: Bus) {
-        db.collection("buses").document(bus.busId).delete()
-            .addOnSuccessListener { Toast.makeText(context, "Bus Deleted", Toast.LENGTH_SHORT).show() }
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Delete Bus")
+            .setMessage("Are you sure you want to delete bus ${bus.busType} (Route ${bus.routeId})?")
+            .setPositiveButton("Delete") { _, _ ->
+                db.collection("buses").document(bus.busId).delete()
+                    .addOnSuccessListener { 
+                        Toast.makeText(context, "Bus Deleted", Toast.LENGTH_SHORT).show() 
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Error deleting bus: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showEditBusDialog(bus: Bus) {
@@ -127,15 +151,5 @@ class AdminDashboardFragment : Fragment() {
             .show()
     }
 
-    private fun wipeAllBuses() {
-        db.collection("buses").get().addOnSuccessListener { snapshots ->
-            val batch = db.batch()
-            for (doc in snapshots) {
-                batch.delete(doc.reference)
-            }
-            batch.commit().addOnSuccessListener {
-                Toast.makeText(context, "All buses removed from fleet.", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+
 }

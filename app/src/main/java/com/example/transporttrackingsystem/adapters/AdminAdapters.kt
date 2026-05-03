@@ -21,7 +21,12 @@ class RouteAdapter(private val routes: List<Route>) : RecyclerView.Adapter<Route
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val route = routes[position]
         holder.name.text = route.routeName
+        holder.name.setTextColor(android.graphics.Color.parseColor("#1A237E"))
+        holder.name.textSize = 16f
+        holder.name.setTypeface(null, android.graphics.Typeface.BOLD)
+
         holder.id.text = "ID: ${route.routeId} | Bus: ${route.busNumber}"
+        holder.id.setTextColor(android.graphics.Color.parseColor("#333333"))
     }
 
     override fun getItemCount() = routes.size
@@ -41,7 +46,12 @@ class StopAdapter(private val stops: List<Stop>) : RecyclerView.Adapter<StopAdap
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val stop = stops[position]
         holder.name.text = "${stop.stopOrder}. ${stop.stopName}"
+        holder.name.setTextColor(android.graphics.Color.parseColor("#1A237E"))
+        holder.name.textSize = 16f
+        holder.name.setTypeface(null, android.graphics.Typeface.BOLD)
+
         holder.details.text = "Route: ${stop.routeId} | Lat: ${stop.latitude}, Lng: ${stop.longitude}"
+        holder.details.setTextColor(android.graphics.Color.parseColor("#333333"))
     }
 
     override fun getItemCount() = stops.size
@@ -61,7 +71,12 @@ class NewsAdapter(private val newsItems: List<News>) : RecyclerView.Adapter<News
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = newsItems[position]
         holder.title.text = item.title
+        holder.title.setTextColor(android.graphics.Color.parseColor("#1A237E"))
+        holder.title.textSize = 16f
+        holder.title.setTypeface(null, android.graphics.Typeface.BOLD)
+
         holder.content.text = item.content
+        holder.content.setTextColor(android.graphics.Color.parseColor("#333333"))
     }
 
     override fun getItemCount() = newsItems.size

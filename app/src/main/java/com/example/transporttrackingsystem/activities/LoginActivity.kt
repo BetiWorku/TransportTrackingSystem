@@ -76,14 +76,20 @@ class LoginActivity : AppCompatActivity() {
                 if (email == "bwwmas@gmail.com" && password == "Yotorb123#") {
                     auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Toast.makeText(this, "Admin Authenticated!", Toast.LENGTH_SHORT).show()
                             // 🚀 GO TO WELCOME SCREEN
                             val intent = Intent(this, WelcomeActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             finish()
                         } else {
-                            Toast.makeText(this, "Admin Auth Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            val exception = task.exception
+                            if (exception is com.google.firebase.auth.FirebaseAuthInvalidUserException) {
+                                Toast.makeText(this, "Email is incorrect", Toast.LENGTH_SHORT).show()
+                            } else if (exception is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(this, "Password is invalid", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "The email and password is incorrect", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                     return@setOnClickListener
@@ -124,7 +130,14 @@ class LoginActivity : AppCompatActivity() {
                                     .show()
                             }
                         } else {
-                            Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            val exception = task.exception
+                            if (exception is com.google.firebase.auth.FirebaseAuthInvalidUserException) {
+                                Toast.makeText(this, "Email is incorrect", Toast.LENGTH_SHORT).show()
+                            } else if (exception is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(this, "Password is invalid", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "The email and password is incorrect", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
             } else {

@@ -208,21 +208,14 @@
                     android:textColor="#333333"
                     android:textSize="20sp"
                     android:textStyle="bold" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnWipeFleet"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wipe Fleet"
-                    android:textColor="#F44336"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/tvViewAllBuses"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="View All"
                     android:textColor="#3F51B5"
                     android:textSize="14sp"
+                    android:padding="8dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
