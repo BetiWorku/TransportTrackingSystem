@@ -83,13 +83,18 @@ class LoginActivity : AppCompatActivity() {
                             finish()
                         } else {
                             val exception = task.exception
-                            if (exception is com.google.firebase.auth.FirebaseAuthInvalidUserException) {
-                                Toast.makeText(this, "Email is incorrect", Toast.LENGTH_SHORT).show()
-                            } else if (exception is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
-                                Toast.makeText(this, "Password is invalid", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this, "The email and password is incorrect", Toast.LENGTH_SHORT).show()
+                            val message = when (exception) {
+                                is com.google.firebase.FirebaseNetworkException -> "Connection lost. Please check your internet."
+                                is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "Email is incorrect. Please try again."
+                                is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "The email and password is incorrect. Please find the correct details and try again."
+                                else -> "Connection lost or email and password incorrect. Please find the correct details and try again."
                             }
+
+                            AlertDialog.Builder(this)
+                                .setTitle("Login Failed")
+                                .setMessage(message)
+                                .setPositiveButton("Try Again", null)
+                                .show()
                         }
                     }
                     return@setOnClickListener
@@ -131,13 +136,18 @@ class LoginActivity : AppCompatActivity() {
                             }
                         } else {
                             val exception = task.exception
-                            if (exception is com.google.firebase.auth.FirebaseAuthInvalidUserException) {
-                                Toast.makeText(this, "Email is incorrect", Toast.LENGTH_SHORT).show()
-                            } else if (exception is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
-                                Toast.makeText(this, "Password is invalid", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this, "The email and password is incorrect", Toast.LENGTH_SHORT).show()
+                            val message = when (exception) {
+                                is com.google.firebase.FirebaseNetworkException -> "Connection lost. Please check your internet."
+                                is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "Email is incorrect. Please try again."
+                                is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "The email and password is incorrect. Please find the correct details and try again."
+                                else -> "Connection lost or email and password incorrect. Please find the correct details and try again."
                             }
+
+                            AlertDialog.Builder(this)
+                                .setTitle("Login Failed")
+                                .setMessage(message)
+                                .setPositiveButton("Try Again", null)
+                                .show()
                         }
                     }
             } else {

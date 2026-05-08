@@ -22,7 +22,7 @@ import androidx.core.app.ActivityCompat
 
 class TerminalsFragment : Fragment() {
     private lateinit var db: FirebaseFirestore
-    private val stopList = mutableListOf<Stop>()
+    private val routeGroups = mutableListOf<RouteGroup>()
     private lateinit var adapter: StopAdapter
     private lateinit var fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient
 
@@ -38,7 +38,7 @@ class TerminalsFragment : Fragment() {
         val btnAdd = view.findViewById<Button>(R.id.btnAddStop)
         val rv = view.findViewById<RecyclerView>(R.id.rvStops)
 
-        adapter = StopAdapter(stopList)
+        adapter = StopAdapter(routeGroups)
         rv.layoutManager = LinearLayoutManager(context)
         rv.adapter = adapter
 
@@ -88,10 +88,26 @@ class TerminalsFragment : Fragment() {
     }
 
     private fun fetchStops() {
-        db.collection("stops").orderBy("stopOrder").addSnapshotListener { snapshots, _ ->
-            stopList.clear()
-            snapshots?.forEach { stopList.add(it.toObject(Stop::class.java)) }
-            adapter.notifyDataSetChanged()
+        db.collection("stops").addSnapshotListener { snapshots, _ ->
+            if (snapshots == null) return@addSnapshotListener
+            
+            val allStops = snapshots.mapNotNull { it.toObject(Stop::class.java) }
+            
+            // Group and Sort
+            val groups = allStops.groupBy { it.routeId }.map { (routeId, stops) ->
+                val sortedStops = stops.sortedBy { it.stopOrder }
+                val pathSummary = if (sortedStops.size >= 2) {
+                    "Terminal: ${sortedStops.first().stopName} ➔ ${sortedStops.last().stopName}"
+                } else if (sortedStops.size == 1) {
+                    "Terminal: ${sortedStops.first().stopName} (Single)"
+                } else {
+                    "Terminal: Empty"
+                }
+                
+                RouteGroup(routeId, pathSummary, sortedStops)
+            }.sortedBy { it.routeId }
+
+            adapter.updateData(groups)
         }
     }
 }

@@ -115,8 +115,13 @@ class BusTrackerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (MainActivity.isMockTestActive) {
-            distanceToStationKm = MainActivity.mockDist
-            etaSecs = MainActivity.mockSecs
+            if (busId.contains("Sheger", true)) {
+                distanceToStationKm = MainActivity.mockShegerDist
+                etaSecs = MainActivity.mockShegerSecs
+            } else {
+                distanceToStationKm = MainActivity.mockDist
+                etaSecs = MainActivity.mockSecs
+            }
             totalDistKm = distanceToStationKm + 2.5
             totalEtaSecs = etaSecs + 450
         }
@@ -247,8 +252,13 @@ class BusTrackerActivity : AppCompatActivity() {
 
                 // 🧪 MOCK OVERRIDE for Tracker Activity
                 if (MainActivity.isMockTestActive) {
-                    distToFrom = MainActivity.mockDist
-                    rawSecs = MainActivity.mockSecs
+                    if (busId.contains("Sheger", true)) {
+                        distToFrom = MainActivity.mockShegerDist
+                        rawSecs = MainActivity.mockShegerSecs
+                    } else {
+                        distToFrom = MainActivity.mockDist
+                        rawSecs = MainActivity.mockSecs
+                    }
                 }
 
                 // Distance & ETA to final destination
@@ -336,15 +346,27 @@ class BusTrackerActivity : AppCompatActivity() {
         }
         
         if (MainActivity.isMockTestActive) {
-            MainActivity.mockSecs = etaSecs
-            MainActivity.mockDist = distanceToStationKm
+            if (busId.contains("Sheger", true)) {
+                MainActivity.mockShegerSecs = etaSecs
+                MainActivity.mockShegerDist = distanceToStationKm
+            } else {
+                MainActivity.mockSecs = etaSecs
+                MainActivity.mockDist = distanceToStationKm
+            }
         }
 
         // 🔔 Sync Notifications in Tracker Activity
+        if (etaSecs <= 900 && !MainActivity.notifiedBuses.contains("${busId}_15min")) {
+            MainActivity.notifiedBuses.add("${busId}_15min")
+            Toast.makeText(this, "🔔 Bus $busId is 15 minutes away!", Toast.LENGTH_LONG).show()
+        }
+        if (etaSecs <= 600 && !MainActivity.notifiedBuses.contains("${busId}_10min")) {
+            MainActivity.notifiedBuses.add("${busId}_10min")
+            Toast.makeText(this, "🔔 Bus $busId is 10 minutes away!", Toast.LENGTH_LONG).show()
+        }
         if (etaSecs <= 300 && !MainActivity.notifiedBuses.contains("${busId}_5min")) {
             MainActivity.notifiedBuses.add("${busId}_5min")
             Toast.makeText(this, "🔔 Bus $busId is 5 minutes away!", Toast.LENGTH_LONG).show()
-            // Optional: send true push notification here if you imported the builder
         }
         if (etaSecs <= 120 && !MainActivity.notifiedBuses.contains("${busId}_2min")) {
             MainActivity.notifiedBuses.add("${busId}_2min")

@@ -4,6 +4,7 @@ import com.example.transporttrackingsystem.R
 import com.example.transporttrackingsystem.models.*
 import com.example.transporttrackingsystem.adapters.*
 import com.example.transporttrackingsystem.utils.*
+import java.util.UUID
 
 import android.Manifest
 import android.app.AlertDialog
@@ -111,6 +112,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         var isMockTestActive = false
         var mockSecs = 600
         var mockDist = 3.33
+        var mockShegerSecs = 1200
+        var mockShegerDist = 5.0
         val notifiedBuses = mutableSetOf<String>()
     }
 
@@ -444,11 +447,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         tvTripInfo.visibility = View.VISIBLE
         
         // 🧪 HARDCODED TEST: Setup mock values before refreshing list
-        if (toQuery.contains("Megenagna", true) || fromQuery.contains("Megenagna", true) || toQuery.contains("Station", true) || fromQuery.contains("Station", true) || toQuery.contains("Abado", true)) {
+        val isSheger = toQuery.contains("Sheger", true) || fromQuery.contains("Sheger", true)
+        val isMegenagna = toQuery.contains("Megenagna", true) || fromQuery.contains("Megenagna", true) || toQuery.contains("Station", true) || fromQuery.contains("Station", true) || toQuery.contains("Abado", true)
+
+        if (isSheger || isMegenagna) {
             isMockTestActive = true
+            // Reset both mock values to start fresh
             mockSecs = 600
             mockDist = 3.33
-            sendArrivalNotification("Bus 44-01 approaching ${toStop.stopName} in 10 mins", 10)
+            mockShegerSecs = 1200
+            mockShegerDist = 5.0
+            
+            if (isSheger) {
+                sendArrivalNotification("Sheger Bus approaching in 20 mins", 20)
+            } else {
+                sendArrivalNotification("Bus 44-01 approaching ${toStop.stopName} in 10 mins", 10)
+            }
         } else {
             isMockTestActive = false
         }
@@ -546,6 +560,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 notify(1, builder.build())
             }
         }
+
+        // 📢 Save to Firestore 'news' for "View All" history
+        val alert = News(
+            newsId = UUID.randomUUID().toString(),
+            title = title,
+            content = msg,
+            author = "System Alert",
+            timestamp = com.google.firebase.Timestamp.now()
+        )
+        db.collection("news").add(alert)
     }
 
 
@@ -803,12 +827,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 // 🧪 MOCK OVERRIDE
                 if (isMockTestActive) {
-                    dist = mockDist.toFloat()
-                    timeSecs = mockSecs
+                    if (id.contains("Sheger", true)) {
+                        dist = mockShegerDist.toFloat()
+                        timeSecs = mockShegerSecs
+                    } else {
+                        dist = mockDist.toFloat()
+                        timeSecs = mockSecs
+                    }
                 }
 
                 val currentBus = nearbyBuses.find { it.id == id || it.id.contains(id) }
-                val finalSortSecs = if (isMockTestActive) mockSecs else if (currentBus != null && kotlin.math.abs(currentBus.sortSecs - timeSecs) < 15) currentBus.sortSecs else timeSecs
+                val finalSortSecs = if (isMockTestActive) {
+                    if (id.contains("Sheger", true)) mockShegerSecs else mockSecs
+                } else if (currentBus != null && kotlin.math.abs(currentBus.sortSecs - timeSecs) < 15) currentBus.sortSecs else timeSecs
                 
                 val m = finalSortSecs / 60
                 val s = finalSortSecs % 60
@@ -823,7 +854,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     m > 0 -> "${m}m ${s}s"
                     else -> "${s}s"
                 }
-                val displayName = if (isBest) "⭐ BEST: $id" else id
+                val displayName = if (isBest) {
+                    if (isMockTestActive && (etTo.text.contains("Sheger", true) || etFrom.text.contains("Sheger", true))) "⭐ BEST: Sheger Bus"
+                    else "⭐ BEST: $id"
+                } else id
                 val routeDestination = if (isBest && endQuery.isNotEmpty()) endQuery else terminal
                 
                 // 🏁 Calculate Total to Final Destination
@@ -879,11 +913,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             if (bus.sortSecs > 0 && bus.sortSecs < Int.MAX_VALUE) { 
                 changed = true
                 if (isMockTestActive && bus.id.contains("BEST")) {
-                    bus.sortSecs = mockSecs
-                    bus.distKm = mockDist
+                    if (bus.id.contains("Sheger", true)) {
+                        bus.sortSecs = mockShegerSecs
+                        bus.distKm = mockShegerDist
+                    } else {
+                        bus.sortSecs = mockSecs
+                        bus.distKm = mockDist
+                    }
                 }
                 val newSecs = bus.sortSecs - 1
                 
+                // 🔔 15 Minute Notification Check
+                if (newSecs <= 900 && !notifiedBuses.contains("${bus.id}_15min")) {
+                    notifiedBuses.add("${bus.id}_15min")
+                    sendArrivalNotification("🔔 Your bus ${bus.id.replace("⭐ BEST: ", "")} is 15 minutes away!", 15)
+                }
+
+                // 🔔 10 Minute Notification Check
+                if (newSecs <= 600 && !notifiedBuses.contains("${bus.id}_10min")) {
+                    notifiedBuses.add("${bus.id}_10min")
+                    sendArrivalNotification("🔔 Your bus ${bus.id.replace("⭐ BEST: ", "")} is 10 minutes away!", 10)
+                }
+
                 // 🔔 5 Minute Notification Check
                 if (newSecs <= 300 && !notifiedBuses.contains("${bus.id}_5min")) {
                     notifiedBuses.add("${bus.id}_5min")
@@ -903,8 +954,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val newDistKm = (bus.distKm - (1.0 / 180.0)).coerceAtLeast(0.0) // Decrease roughly 5.5 meters per second
 
                 if (isMockTestActive && bus.id.contains("BEST")) {
-                    mockSecs = newSecs
-                    mockDist = newDistKm
+                    if (bus.id.contains("Sheger", true)) {
+                        mockShegerSecs = newSecs
+                        mockShegerDist = newDistKm
+                    } else {
+                        mockSecs = newSecs
+                        mockDist = newDistKm
+                    }
                 }
                 val newDistStr = when {
                     newDistKm < 0.02 -> "At Station"
