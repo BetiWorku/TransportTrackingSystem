@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import com.google.android.material.textfield.TextInputEditText
@@ -72,21 +73,31 @@ class RegisterActivity : AppCompatActivity() {
                                                 ?.addOnCompleteListener { verifyTask ->
                                                     if (verifyTask.isSuccessful) {
                                                         Log.d("REGISTER", "Firebase verification email sent successfully.")
-                                                        Toast.makeText(this, "Registration successful! Please check your email ($email) to verify your account.", Toast.LENGTH_LONG).show()
+                                                        
+                                                        // 📢 Show a clear Alert instead of a Toast
+                                                        AlertDialog.Builder(this@RegisterActivity)
+                                                            .setTitle("Verification Required")
+                                                            .setMessage("Verification email sent. Please check your inbox or spam folder.")
+                                                            .setCancelable(false)
+                                                            .setPositiveButton("Got It") { _, _ ->
+                                                                // 🚪 Sign out and Move to Login only after they click OK
+                                                                auth.signOut()
+                                                                val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                                                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                                startActivity(intent)
+                                                                finish()
+                                                            }
+                                                            .show()
                                                     } else {
                                                         val error = verifyTask.exception?.message ?: "Unknown error"
                                                         Log.e("REGISTER", "Firebase verification failed: $error")
-                                                        Toast.makeText(this, "Registration successful, but verification email failed: $error", Toast.LENGTH_LONG).show()
+                                                        Toast.makeText(this@RegisterActivity, "Registration successful, but verification email failed: $error", Toast.LENGTH_LONG).show()
+                                                        
+                                                        // Move anyway but let them know it failed
+                                                        auth.signOut()
+                                                        startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                                                        finish()
                                                     }
-                                                    
-                                                    // 🚪 Sign out immediately for normal users
-                                                    auth.signOut()
-
-                                                    // 🚀 Move back to Login Page
-                                                    val intent = Intent(this, LoginActivity::class.java)
-                                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                                    startActivity(intent)
-                                                    finish()
                                                 }
                                         }
                                     }

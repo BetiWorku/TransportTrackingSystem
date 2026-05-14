@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvAdminCompUser"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="User: user@email.com"
+                android:textStyle="bold"
+                android:textColor="#3F51B5"
+                android:textSize="11sp"/>
+            <TextView
+                android:id="@+id/tvAdminCompStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PENDING"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvAdminCompSubject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Subject: Heavy Delay"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:textSize="13sp"/>
+
+        <TextView
+            android:id="@+id/tvAdminCompMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="The bus 44-01 is 30 minutes late today."
+            android:textColor="#666666"
+            android:textSize="12sp"
+            android:maxLines="3"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/tvViewMoreAdminMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View All"
+            android:textColor="#1976D2"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginTop="2dp"
+            android:paddingVertical="4dp"
+            android:paddingEnd="16dp"
+            android:visibility="gone"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginVertical="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+            
+            <Button
+                android:id="@+id/btnAdminDelete"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:textColor="#D32F2F"
+                android:textSize="11sp"
+                android:minHeight="0dp"
+                android:padding="0dp"/>
+
+            <Button
+                android:id="@+id/btnAdminReply"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Reply"
+                android:textSize="11sp"
+                android:minHeight="0dp"
+                android:padding="0dp"/>
+
+            <Button
+                android:id="@+id/btnAdminResolve"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Resolve"
+                android:textSize="11sp"
+                android:minHeight="0dp"
+                android:padding="4dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvAdminReplyPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Reply sent: Sorry for the delay."
+            android:textColor="#388E3C"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tvViewMoreAdminReply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View All"
+            android:textColor="#1976D2"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginTop="2dp"
+            android:paddingVertical="4dp"
+            android:paddingEnd="16dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

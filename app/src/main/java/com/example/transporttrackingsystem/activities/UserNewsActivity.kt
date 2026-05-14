@@ -13,8 +13,10 @@ import com.google.firebase.firestore.Query
 
 class UserNewsActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
+    private val allNewsList = mutableListOf<News>()
     private val newsList = mutableListOf<News>()
     private lateinit var adapter: NewsAdapter
+    private var showingAllNews = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,15 +29,69 @@ class UserNewsActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = adapter
 
+        findViewById<android.widget.ImageView>(R.id.btnBackNews).setOnClickListener { finish() }
+        
+        val btnClear = findViewById<android.widget.TextView>(R.id.btnClearAllNews)
+        btnClear.setOnClickListener {
+            if (newsList.isNotEmpty()) {
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Delete All Notifications")
+                    .setMessage("Are you sure you want to delete all notifications?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        clearAllNotifications()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+        }
+
+        val tvViewAll = findViewById<android.widget.TextView>(R.id.tvViewAllNews)
+        tvViewAll.setOnClickListener {
+            showingAllNews = !showingAllNews
+            updateListUI()
+        }
+
         fetchNews()
+    }
+
+    private fun updateListUI() {
+        newsList.clear()
+        if (showingAllNews) {
+            newsList.addAll(allNewsList)
+            findViewById<android.widget.TextView>(R.id.tvViewAllNews).text = "View Less"
+        } else {
+            newsList.addAll(allNewsList.take(4))
+            findViewById<android.widget.TextView>(R.id.tvViewAllNews).text = "View All"
+        }
+        
+        // Hide View All button if 4 or fewer items
+        if (allNewsList.size <= 4) {
+            findViewById<android.widget.TextView>(R.id.tvViewAllNews).visibility = android.view.View.GONE
+        } else {
+            findViewById<android.widget.TextView>(R.id.tvViewAllNews).visibility = android.view.View.VISIBLE
+        }
+        
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun clearAllNotifications() {
+        val batch = db.batch()
+        db.collection("news").get().addOnSuccessListener { snapshot ->
+            for (doc in snapshot.documents) {
+                batch.delete(doc.reference)
+            }
+            batch.commit().addOnSuccessListener {
+                android.widget.Toast.makeText(this, "Notifications cleared", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun fetchNews() {
         db.collection("news").orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, _ ->
-                newsList.clear()
-                snapshots?.forEach { newsList.add(it.toObject(News::class.java)) }
-                adapter.notifyDataSetChanged()
+                allNewsList.clear()
+                snapshots?.forEach { allNewsList.add(it.toObject(News::class.java)) }
+                updateListUI()
             }
     }
 }

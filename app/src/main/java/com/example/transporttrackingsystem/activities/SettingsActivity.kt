@@ -1,6 +1,7 @@
 package com.example.transporttrackingsystem.activities
 
 import com.example.transporttrackingsystem.R
+import com.example.transporttrackingsystem.activities.MainActivity
 
 import android.content.Intent
 import android.os.Bundle
@@ -36,6 +37,15 @@ class SettingsActivity : AppCompatActivity() {
         val etUpdateName = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etUpdateName)
         val etUpdatePassword = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etUpdatePassword)
         val btnUpdateProfile = findViewById<Button>(R.id.btnUpdateProfile)
+        val switchNotifications = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.switchNotifications)
+
+        // Sync notification toggle with global setting
+        switchNotifications.isChecked = MainActivity.isAlertsEnabled
+        switchNotifications.setOnCheckedChangeListener { _, isChecked ->
+            MainActivity.isAlertsEnabled = isChecked
+            val state = if (isChecked) "Enabled" else "Disabled"
+            Toast.makeText(this, "Notifications $state", Toast.LENGTH_SHORT).show()
+        }
 
         // Load existing name
         currentUser?.uid?.let { uid ->

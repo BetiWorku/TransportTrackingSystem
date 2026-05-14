@@ -71,18 +71,48 @@ class ResetPasswordActivity : AppCompatActivity() {
     private fun handleIntent(intent: Intent?) {
         val appLinkData: Uri? = intent?.data
         if (appLinkData != null) {
-            // mode=resetPassword&oobCode=...
             oobCode = appLinkData.getQueryParameter("oobCode")
             val mode = appLinkData.getQueryParameter("mode")
 
-            if (mode != "resetPassword" || oobCode == null) {
-                Toast.makeText(this, "Invalid reset link", Toast.LENGTH_SHORT).show()
-                finish()
+            when (mode) {
+                "resetPassword" -> {
+                    if (oobCode == null) {
+                        Toast.makeText(this, "Invalid reset link", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+                "verifyEmail" -> {
+                    if (oobCode != null) {
+                        verifyEmail(oobCode!!)
+                    } else {
+                        Toast.makeText(this, "Invalid verification link", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+                else -> {
+                    // If it's some other mode, just let it be or handle accordingly
+                    // But for now, if it's not reset, it might be verification
+                    Toast.makeText(this, "Processing link...", Toast.LENGTH_SHORT).show()
+                }
             }
         } else {
-            // If opened without data, shouldn't happen unless user opens manually
-            Toast.makeText(this, "No reset data found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No data found", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    private fun verifyEmail(code: String) {
+        auth.applyActionCode(code)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Email verified successfully! You can now login.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "Verification failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                }
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
     }
 }

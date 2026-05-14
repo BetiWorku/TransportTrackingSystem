@@ -85,6 +85,14 @@ class AdminDashboardFragment : Fragment() {
             var activeCount = 0
 
             for (doc in snapshot.documents) {
+                val busType = doc.getString("busType") ?: ""
+                
+                // 🧹 CLEANUP: Automatically delete fake passenger buses from Firebase!
+                if (busType.isEmpty() || busType.contains("Unknown", ignoreCase = true)) {
+                    db.collection("buses").document(doc.id).delete()
+                    continue // Skip adding it to the dashboard UI
+                }
+
                 val bus = doc.toObject(Bus::class.java)?.copy(busId = doc.id)
                 if (bus != null) {
                     allBuses.add(bus)

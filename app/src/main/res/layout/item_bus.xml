@@ -12,19 +12,19 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:padding="4dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="2dp"
             android:src="@android:drawable/ic_dialog_map"
             app:tint="#3F51B5" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="Bus #101"
                 android:textColor="#333333"
-                android:textSize="17sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="To: Stadium"
                 android:textColor="#5C6BC0"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/busDistance"
@@ -51,13 +51,13 @@
                 android:layout_height="wrap_content"
                 android:text="2.5 km away"
                 android:textColor="#9E9E9E"
-                android:textSize="12sp" />
+                android:textSize="11sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="4dp">
+                android:layout_marginTop="2dp">
                 
                 <TextView
                     android:id="@+id/tvBusType"
@@ -66,11 +66,11 @@
                     android:text="Anbessa"
                     android:background="#E3F2FD"
                     android:textColor="#1976D2"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="2dp"
-                    android:textSize="10sp"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="1dp"
+                    android:textSize="9sp"
                     android:textStyle="bold"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="6dp"/>
 
                 <TextView
                     android:id="@+id/tvPassengers"
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:text="18/30"
                     android:textColor="#43A047"
-                    android:textSize="10sp"
+                    android:textSize="9sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -86,10 +86,10 @@
                 android:id="@+id/tvCurrentStop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:text="Current: Bole"
                 android:textColor="#333333"
-                android:textSize="11sp"
+                android:textSize="10sp"
                 android:textStyle="italic" />
 
             <TextView
@@ -98,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:text="Next: Megenagna"
                 android:textColor="#757575"
-                android:textSize="10sp" />
+                android:textSize="9sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -112,24 +112,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_eta_pill"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="8dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
                 android:text="8 mins"
                 android:textColor="#3F51B5"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btnItemTrackLive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="4dp"
                 android:text="🛰️ TRACK LIVE"
                 android:textColor="#00C853"
-                android:textSize="10sp"
+                android:textSize="9sp"
                 android:textStyle="bold"
                 android:background="?attr/selectableItemBackground"
-                android:padding="4dp"/>
+                android:padding="2dp"/>
         </LinearLayout>
 
     </LinearLayout>

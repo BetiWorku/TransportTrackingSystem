@@ -114,8 +114,8 @@ class LoginActivity : AppCompatActivity() {
                             } else {
                                 // 🛑 Block access until verified
                                 AlertDialog.Builder(this)
-                                    .setTitle("Email Not Verified")
-                                    .setMessage("Please verify your email at ${user?.email} before logging in. Check your Spam folder if you don't see it!")
+                                    .setTitle("Verification Required")
+                                    .setMessage("Your email is not verified yet. Verification email sent. Please check your inbox or spam folder.")
                                     .setPositiveButton("I Verified It") { _, _ -> 
                                         // Refresh user and try again
                                         user?.reload()?.addOnCompleteListener { 

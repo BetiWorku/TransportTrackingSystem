@@ -25,6 +25,10 @@
             android:id="@+id/nav_news"
             android:icon="@android:drawable/ic_menu_info_details"
             android:title="Manage News" />
+        <item
+            android:id="@+id/nav_admin_complaints"
+            android:icon="@android:drawable/ic_menu_help"
+            android:title="User Complaints" />
     </group>
     
     <item android:title="Account">

@@ -54,3 +54,14 @@ data class News(
     val author: String = "Admin",
     val timestamp: Timestamp = Timestamp.now()
 )
+
+data class Complaint(
+    val id: String = "",
+    val userId: String = "",
+    val userEmail: String = "",
+    val subject: String = "",
+    val message: String = "",
+    val status: String = "pending", // pending, resolved
+    val adminReply: String = "",
+    val timestamp: Timestamp = Timestamp.now()
+)

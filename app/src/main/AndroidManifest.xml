@@ -81,6 +81,11 @@
         <!-- 🚀 BUS TRACKER ACTIVITY -->
         <activity android:name=".activities.BusTrackerActivity" />
 
+        <!-- 🚀 COMPLAINT ACTIVITY -->
+        <activity 
+            android:name=".activities.ComplaintActivity"
+            android:parentActivityName=".activities.MainActivity" />
+
         <receiver android:name=".utils.NotificationActionReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="ACTION_MUTE" />
