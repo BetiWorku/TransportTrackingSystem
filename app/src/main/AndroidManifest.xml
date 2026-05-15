@@ -64,7 +64,9 @@
         <activity android:name=".activities.RegisterActivity" />
 
         <!-- 🚀 MAIN MAP ACTIVITY -->
-        <activity android:name=".activities.MainActivity" />
+        <activity 
+            android:name=".activities.MainActivity"
+            android:exported="false" />
 
         <!-- 🚀 SETTINGS ACTIVITY -->
         <activity android:name=".activities.SettingsActivity" />

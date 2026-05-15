@@ -53,8 +53,7 @@ class SplashActivity : AppCompatActivity() {
             .withEndAction {
                 // ⏳ After 2.5s total → navigate to Login or Main
                 loading.postDelayed({
-                    val auth = FirebaseAuth.getInstance()
-                    // Always go to Login (no auto-login to MainActivity as requested previously)
+                    // Always go to Login (Splash → Login → Dashboard flow)
                     val next = Intent(this, LoginActivity::class.java)
                     startActivity(next)
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)

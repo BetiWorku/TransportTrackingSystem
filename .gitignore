@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase & Secrets
+/app/google-services.json
+/test.js
+/C:/Users/hp/AndroidStudioProjects/TransportTrackingSystem/app/google-services.json

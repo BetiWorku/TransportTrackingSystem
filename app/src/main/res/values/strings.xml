@@ -24,4 +24,10 @@
     <string name="dist_to_stop">%1$s to %2$s</string>
     <string name="onboard_label">Onboard: %1$s</string>
     <string name="trip_distance_time">Distance: %1$.1f km | Est. Travel Time: %2$d mins</string>
+    <string name="route_id_bus">ID: %1$s | Bus: %2$s</string>
+    <string name="stop_order_name">%1$d. %2$s</string>
+    <string name="stop_coords">Lat: %1$.6f, Lng: %2$.6f</string>
+    <string name="view_all_stops">View All (%1$d)</string>
+    <string name="hide_stops">Hide Stops</string>
+
 </resources>

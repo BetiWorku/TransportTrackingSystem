@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.graphics.toColorInt
 
 class RouteAdapter(private val routes: List<Route>) : RecyclerView.Adapter<RouteAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -21,13 +22,14 @@ class RouteAdapter(private val routes: List<Route>) : RecyclerView.Adapter<Route
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val route = routes[position]
+        val context = holder.itemView.context
         holder.name.text = route.routeName
-        holder.name.setTextColor(android.graphics.Color.parseColor("#1A237E"))
+        holder.name.setTextColor("#1A237E".toColorInt())
         holder.name.textSize = 16f
         holder.name.setTypeface(null, android.graphics.Typeface.BOLD)
 
-        holder.id.text = "ID: ${route.routeId} | Bus: ${route.busNumber}"
-        holder.id.setTextColor(android.graphics.Color.parseColor("#333333"))
+        holder.id.text = context.getString(R.string.route_id_bus, route.routeId, route.busNumber)
+        holder.id.setTextColor("#333333".toColorInt())
     }
 
     override fun getItemCount() = routes.size
@@ -58,11 +60,16 @@ class StopAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val group = groups[position]
+        val context = holder.itemView.context
         holder.routeId.text = group.routeId
         holder.routePath.text = group.pathSummary
         
         holder.stopsContainer.visibility = if (group.isExpanded) View.VISIBLE else View.GONE
-        holder.btnExpand.text = if (group.isExpanded) "Hide Stops" else "View All (${group.stops.size})"
+        holder.btnExpand.text = if (group.isExpanded) {
+            context.getString(R.string.hide_stops)
+        } else {
+            context.getString(R.string.view_all_stops, group.stops.size)
+        }
         
         holder.btnExpand.setOnClickListener {
             group.isExpanded = !group.isExpanded
@@ -72,10 +79,13 @@ class StopAdapter(
         // Add stops dynamically
         holder.stopsContainer.removeAllViews()
         if (group.isExpanded) {
+            val context = holder.itemView.context
             group.stops.forEach { stop ->
-                val stopView = LayoutInflater.from(holder.itemView.context).inflate(R.layout.item_admin_stop_mini, holder.stopsContainer, false)
-                stopView.findViewById<TextView>(R.id.tvMiniStopName).text = "${stop.stopOrder}. ${stop.stopName}"
-                stopView.findViewById<TextView>(R.id.tvMiniStopCoords).text = "Lat: ${stop.latitude}, Lng: ${stop.longitude}"
+                val stopView = LayoutInflater.from(context).inflate(R.layout.item_admin_stop_mini, holder.stopsContainer, false)
+                stopView.findViewById<TextView>(R.id.tvMiniStopName).text = 
+                    context.getString(R.string.stop_order_name, stop.stopOrder, stop.stopName)
+                stopView.findViewById<TextView>(R.id.tvMiniStopCoords).text = 
+                    context.getString(R.string.stop_coords, stop.latitude, stop.longitude)
                 holder.stopsContainer.addView(stopView)
             }
         }
@@ -83,6 +93,7 @@ class StopAdapter(
 
     override fun getItemCount() = groups.size
 
+    @android.annotation.SuppressLint("NotifyDataSetChanged")
     fun updateData(newGroups: List<RouteGroup>) {
         this.groups = newGroups
         notifyDataSetChanged()
@@ -111,10 +122,21 @@ class NewsAdapter(private val newsItems: List<News>) : RecyclerView.Adapter<News
         val sdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
         holder.time.text = sdf.format(item.timestamp.toDate())
 
-        if (item.author.contains("Alert", true)) {
-            holder.author.setTextColor(android.graphics.Color.parseColor("#E65100"))
+        val context = holder.itemView.context
+        if (item.title.contains("Arriving", true) || item.author.contains("Alert", true)) {
+            // ✅ SHOW TEXT: Dark Blue text on White background
+            holder.title.setTextColor("#1A237E".toColorInt())
+            holder.title.background = null
+            holder.title.setPadding(0, 0, 0, 0)
+            
+            holder.author.setTextColor("#E65100".toColorInt())
         } else {
-            holder.author.setTextColor(android.graphics.Color.parseColor("#3F51B5"))
+            // ℹ️ STYLE AS NORMAL NEWS: Dark text on transparent background
+            holder.title.setTextColor("#1A237E".toColorInt())
+            holder.title.background = null
+            holder.title.setPadding(0, 0, 0, 0)
+            
+            holder.author.setTextColor("#3F51B5".toColorInt())
         }
     }
 
