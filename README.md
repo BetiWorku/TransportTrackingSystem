@@ -1,77 +1,61 @@
 # Addis Transport - Transport Tracking System 🚍
 
-Addis Transport is a comprehensive Android-based real-time bus tracking and management system designed to improve the commuting experience in Addis Ababa. It provides users with live bus locations, estimated arrival times (ETA), and route planning, while giving administrators tools to manage the fleet, routes, and news updates.
+Addis Transport is a comprehensive real-time bus tracking and management suite designed to improve the commuting experience in Addis Ababa. It features a native Android application for passengers and a premium React-based Web Dashboard for fleet administrators.
 
-## 🚀 Features
+## 🌟 Today's Major Updates (May 16, 2026)
+*   **Premium Admin Gateway**: Redesigned the Web Login into a high-end, two-column enterprise interface with real-time fleet telemetry.
+*   **Full Mobile Responsiveness**: Implemented a slide-over navigation system and centered administrative forms for perfect mobile dashboard management.
+*   **Live Data Integration**: Connected the login screen to live Firestore metrics to show active vehicle counts instantly.
+*   **Optimized Workflows**: Synchronized notification badges with database states for accurate real-time alerting.
 
-### For Users
+## 🚀 Key Modules
+
+### 📱 Android Application (Passengers)
 *   **Live Map Tracking**: View real-time locations of buses on Google Maps.
 *   **Trip Planner**: Find the fastest routes from your current station to your destination.
 *   **Real-time Alerts**: Get notified about traffic congestion or delays.
-*   **Detailed Bus Info**: See passenger occupancy, speed, and terminal information.
 *   **News & Updates**: Stay informed with the latest transport system announcements.
 
-### For Administrators
-*   **Fleet Management**: Add, update, or remove buses from the network.
-*   **Route & Stop Management**: Configure bus routes and specific station stops.
-*   **News Posting**: Broadcast system-wide alerts and news to all users.
-*   **Real-time Statistics**: Monitor active fleet status and capacity levels.
+### 💻 Web Dashboard (Administrators)
+*   **Enterprise Fleet Control**: Add, update, or remove buses with a high-density management interface.
+*   **Terminal & Route Configuration**: Geolocation-based station setup and route ordering.
+*   **Live Command Center**: Monitor fleet status, driver information, and passenger capacity in real-time.
+*   **System Notifications**: Broadcast news and alerts to all connected mobile users.
 
 ## 🛠 Tech Stack
 
-*   **Language**: Kotlin
-*   **UI Layout**: XML (Material Design)
-*   **Backend**: Firebase (Authentication, Cloud Firestore)
-*   **Maps**: Google Maps SDK for Android
-*   **Networking**: JavaMail API (for email services)
-*   **Architecture**: Fragment-based navigation with Activity controllers
+*   **Mobile**: Kotlin, XML, Google Maps SDK, Firebase.
+*   **Web**: React.js, Vite, Tailwind CSS, Lucide Icons.
+*   **Backend**: Firebase Firestore, Authentication, and Cloud Functions.
+*   **Design**: Modern Enterprise Aesthetic (Glassmorphism, Vibrant Mesh Gradients).
 
 ## 📂 Project Structure
 
 ```text
 TransportTrackingSystem/
-├── app/
-│   ├── src/main/java/com/example/transporttrackingsystem/
-│   │   ├── activities/      # Screen controllers (Splash, Login, Main, etc.)
-│   │   ├── fragments/       # Admin and User sub-screens
-│   │   ├── adapters/        # RecyclerView adapters for lists
-│   │   ├── models/          # Data classes (Bus, Route, News, etc.)
-│   │   └── utils/           # Helper classes (Email, Notifications)
-│   ├── src/main/res/        # Resources (Layouts, Drawables, Strings)
-│   └── AndroidManifest.xml  # App configuration and permissions
-├── Screenshots/             # Application visual documentation
-│   ├── User/                # User interface screenshots
-│   └── Admin/               # Admin dashboard screenshots
-└── build.gradle.kts         # Build configuration
+├── app/                      # Native Android Application (Kotlin)
+├── admin-dashboard-web/      # Enterprise Web Dashboard (React)
+│   ├── src/
+│   │   ├── components/       # Premium UI Modules (AdminLogin, Dashboard)
+│   │   ├── firebase.js       # Real-time DB Configuration
+│   │   └── App.jsx           # Responsive Routing & State Logic
+├── Screenshots/              # Visual Documentation
+└── README.md                 # Project Overview
 ```
 
 ## ⚙️ Setup & Installation
 
-### Prerequisites
-*   **Android Studio**: Ladybug (or newer)
-*   **JDK**: Version 11 or 17
-*   **Firebase Account**: To connect the database and authentication.
-*   **Google Maps API Key**: To enable map features.
+### Web Dashboard
+```bash
+cd admin-dashboard-web
+npm install
+npm run dev
+```
 
-### Build Instructions
-1.  **Clone the repository**:
-    ```bash
-    git clone [repository-url]
-    ```
-2.  **Open in Android Studio**:
-    *   File > Open > Select `TransportTrackingSystem` folder.
-3.  **Configure Firebase**:
-    *   Place your `google-services.json` file in the `app/` directory.
-    *   Ensure Firestore and Authentication are enabled in your Firebase Console.
-4.  **Configure Maps API**:
-    *   Add your API Key in `AndroidManifest.xml` under:
-        ```xml
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR_KEY_HERE"/>
-        ```
-5.  **Sync Gradle**:
-    *   Click "Sync Project with Gradle Files" in the top bar.
-6.  **Run**:
-    *   Select your emulator or physical device and click the **Run** button.
+### Android App
+1.  Open the root folder in **Android Studio**.
+2.  Add your `google-services.json` to the `app/` folder.
+3.  Sync Gradle and Run.
 
 ## 📸 Screenshots
 
