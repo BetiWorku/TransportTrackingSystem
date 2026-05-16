@@ -22,25 +22,48 @@ Addis Transport is a comprehensive real-time bus tracking and management suite d
 *   **Live Command Center**: Monitor fleet status, driver information, and passenger capacity in real-time.
 *   **System Notifications**: Broadcast news and alerts to all connected mobile users.
 
-## 🛠 Tech Stack
+## 🛠 Tech Stack & Architecture
 
-*   **Mobile**: Kotlin, XML, Google Maps SDK, Firebase.
-*   **Web**: React.js, Vite, Tailwind CSS, Lucide Icons.
-*   **Backend**: Firebase Firestore, Authentication, and Cloud Functions.
-*   **Design**: Modern Enterprise Aesthetic (Glassmorphism, Vibrant Mesh Gradients).
+### Mobile App (Android/Kotlin)
+*   **Language**: **Kotlin** - Google's official language for Android. Used because it is safe, prevents common crashes (like null pointer exceptions), and makes code highly efficient.
+*   **Architecture**: **MVVM** (Model-View-ViewModel) - Separates UI from data logic, preventing app crashes when the device screen is rotated.
+*   **Asynchronous Tasks**: **Kotlin Coroutines** - Handles background tasks (like fetching location) smoothly without freezing the app interface.
+*   **UI & Maps**: XML Layouts, Material Design, Google Maps SDK.
 
-## 📂 Project Structure
+### Web Dashboard (React.js)
+*   **Framework**: **React.js** - Component-based architecture allows us to build complex, reusable UI elements efficiently and update live map data without reloading the page.
+*   **Styling**: **Tailwind CSS** - A utility-first CSS framework that allows for rapid, beautiful, and responsive design directly in the code without writing bloated CSS files.
+*   **State Management**: Context API / React Hooks.
+*   **Backend for both**: Firebase Firestore (NoSQL), Authentication, and Realtime data sync.
 
+## 📂 Project Folder Structures & Purpose
+
+### 1. Passenger Mobile App (`app/src/main/`)
+The native Android app uses the following structured directories to maintain clean and scalable code:
 ```text
-TransportTrackingSystem/
-├── app/                      # Native Android Application (Kotlin)
-├── admin-dashboard-web/      # Enterprise Web Dashboard (React)
-│   ├── src/
-│   │   ├── components/       # Premium UI Modules (AdminLogin, Dashboard)
-│   │   ├── firebase.js       # Real-time DB Configuration
-│   │   └── App.jsx           # Responsive Routing & State Logic
-├── Screenshots/              # Visual Documentation
-└── README.md                 # Project Overview
+app/src/main/
+├── java/com/example/transporttrackingsystem/
+│   ├── activities/      # Contains the main UI screens (like Map or Login). Controls user interactions.
+│   ├── adapters/        # Acts as a bridge between raw data (e.g., a list of buses) and the UI elements (RecyclerViews).
+│   ├── models/          # Defines the data blueprints (e.g., how a 'Bus' or 'Complaint' is represented in code).
+│   ├── network/         # Manages internet calls, API requests, and Firebase database connections securely.
+│   ├── utils/           # Helper functions (formatting time, calculating distances) used across the app to avoid repeating code.
+│   └── viewmodels/      # Stores UI data safely so it isn't lost if the app state changes (e.g., getting a phone call).
+└── res/
+    ├── drawable/        # Contains images, icons, and custom XML shape definitions.
+    └── layout/          # The visual design rules (XML layout files) for all screens.
+```
+
+### 2. Admin Web Dashboard (`admin-dashboard-web/`)
+The React dashboard is organized into logical feature modules:
+```text
+admin-dashboard-web/src/
+├── assets/              # Stores static files like logos, images, and fonts.
+├── components/          # Reusable UI parts (like buttons, sidebars, or map cards). Built once and used everywhere.
+├── context/             # Manages "Global State" (e.g., holding the currently logged-in Admin's profile data).
+├── hooks/               # Custom React functions handling reusable logic (like authentication checks).
+├── pages/               # The main full-screen views (e.g., Dashboard page, Fleet Management page).
+└── utils/               # Helper JavaScript functions (like sorting algorithms for data tables).
 ```
 
 ## ⚙️ Setup & Installation
