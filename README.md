@@ -1,98 +1,125 @@
-# Addis Transport - Transport Tracking System 🚍
+<div align="center">
+  <img src="https://img.shields.io/badge/Addis_Transport-Tracking_System-2196F3?style=for-the-badge&logo=googlemaps&logoColor=white" alt="Logo"/>
+  <br/>
+  <h1>🚍 Addis Transport Tracking System</h1>
+  <p><strong>A Next-Generation Real-Time Urban Mobility & Fleet Management Solution for Addis Ababa.</strong></p>
+  
+  [![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?style=for-the-badge&logo=kotlin&logoColor=white)]()
+  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)]()
+  [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)]()
+  [![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)]()
+</div>
 
-Addis Transport is a comprehensive real-time bus tracking and management suite designed to improve the commuting experience in Addis Ababa. It features a native Android application for passengers and a premium React-based Web Dashboard for fleet administrators.
+<hr/>
 
-## 🌟 Today's Major Updates (May 16, 2026)
-*   **Premium Admin Gateway**: Redesigned the Web Login into a high-end, two-column enterprise interface with real-time fleet telemetry.
-*   **Full Mobile Responsiveness**: Implemented a slide-over navigation system and centered administrative forms for perfect mobile dashboard management.
-*   **Live Data Integration**: Connected the login screen to live Firestore metrics to show active vehicle counts instantly.
-*   **Optimized Workflows**: Synchronized notification badges with database states for accurate real-time alerting.
+## ✨ Project Overview
 
-## 🚀 Key Modules
+Addis Transport is a comprehensive, dual-platform ecosystem designed to revolutionize public commuting in Addis Ababa. It bridges the gap between daily commuters and transit authorities by providing accurate, real-time bus tracking and a powerful centralized management dashboard.
 
-### 📱 Android Application (Passengers)
-*   **Live Map Tracking**: View real-time locations of buses on Google Maps.
-*   **Trip Planner**: Find the fastest routes from your current station to your destination.
-*   **Real-time Alerts**: Get notified about traffic congestion or delays.
-*   **News & Updates**: Stay informed with the latest transport system announcements.
+<div align="center">
+  
+| 📱 Passenger App (Android/Kotlin) | 💻 Admin Dashboard (React.js) |
+| :--- | :--- |
+| **Live Map Tracking:** Watch buses move in real-time. | **Enterprise Fleet Control:** Add, update, or remove buses. |
+| **Smart Trip Planner:** Find the fastest routes to destinations. | **Terminal Config:** Geolocation-based route ordering. |
+| **Instant ETA:** Get accurate arrival times based on speed. | **Command Center:** Monitor driver info & live capacity. |
+| **Alerts & News:** Receive push notifications for delays. | **Broadcast Hub:** Send system-wide alerts instantly. |
 
-### 💻 Web Dashboard (Administrators)
-*   **Enterprise Fleet Control**: Add, update, or remove buses with a high-density management interface.
-*   **Terminal & Route Configuration**: Geolocation-based station setup and route ordering.
-*   **Live Command Center**: Monitor fleet status, driver information, and passenger capacity in real-time.
-*   **System Notifications**: Broadcast news and alerts to all connected mobile users.
+</div>
 
-## 🛠 Tech Stack & Architecture
+---
 
-### Mobile App (Android/Kotlin)
-*   **Language**: **Kotlin** - Google's official language for Android. Used because it is safe, prevents common crashes (like null pointer exceptions), and makes code highly efficient.
-*   **Architecture**: **MVVM** (Model-View-ViewModel) - Separates UI from data logic, preventing app crashes when the device screen is rotated.
-*   **Asynchronous Tasks**: **Kotlin Coroutines** - Handles background tasks (like fetching location) smoothly without freezing the app interface.
-*   **UI & Maps**: XML Layouts, Material Design, Google Maps SDK.
+## 🚀 Today's Major Updates (May 16, 2026)
 
-### Web Dashboard (React.js)
-*   **Framework**: **React.js** - Component-based architecture allows us to build complex, reusable UI elements efficiently and update live map data without reloading the page.
-*   **Styling**: **Tailwind CSS** - A utility-first CSS framework that allows for rapid, beautiful, and responsive design directly in the code without writing bloated CSS files.
-*   **State Management**: Context API / React Hooks.
-*   **Backend for both**: Firebase Firestore (NoSQL), Authentication, and Realtime data sync.
+*   💎 **Premium Admin Gateway**: Redesigned Web Login into a high-end, two-column enterprise interface with live fleet telemetry.
+*   📱 **Full Mobile Responsiveness**: Implemented a slide-over navigation system and perfectly centered forms for mobile dashboard management.
+*   ⚡ **Live Data Integration**: Connected the login screen to live Firestore metrics to show active vehicle counts instantly.
+*   🔔 **Optimized Workflows**: Synchronized notification badges with database states for accurate real-time alerting.
 
-## 📂 Project Folder Structures & Purpose
+---
 
-### 1. Passenger Mobile App (`app/src/main/`)
-The native Android app uses the following structured directories to maintain clean and scalable code:
+## 🛠️ Architecture & Tech Stack
+
+### 📱 1. Mobile Passenger App (Native Android)
+Built for speed, reliability, and smooth animations even on lower-end devices.
+*   **Kotlin**: Google's official, highly-secure language preventing common crashes.
+*   **MVVM Architecture**: Separates UI from logic, ensuring the app never crashes during screen rotations.
+*   **Coroutines**: Handles heavy background tasks (like GPS polling) without freezing the UI.
+*   **Google Maps SDK**: Renders custom dynamic markers seamlessly.
+
+### 🌐 2. Web Admin Dashboard (React.js)
+A robust command center built to handle thousands of live data points.
+*   **React.js**: Component-based architecture for extremely fast map and data rendering without page reloads.
+*   **Tailwind CSS**: Utility-first styling for a beautiful, responsive, "Glassmorphism" enterprise aesthetic.
+*   **Context API**: Manages complex global states (like authenticated admin profiles).
+
+### ☁️ 3. Shared Backend
+*   **Firebase Firestore (NoSQL)**: Ultra-fast real-time database syncing across Web and Mobile simultaneously.
+*   **Firebase Auth**: Secure, role-based access control.
+
+---
+
+## 📂 Project Structure & Deep Dive
+
+### The Android App (`app/src/main/`)
 ```text
 app/src/main/
-├── java/com/example/transporttrackingsystem/
-│   ├── activities/      # Contains the main UI screens (like Map or Login). Controls user interactions.
-│   ├── adapters/        # Acts as a bridge between raw data (e.g., a list of buses) and the UI elements (RecyclerViews).
-│   ├── models/          # Defines the data blueprints (e.g., how a 'Bus' or 'Complaint' is represented in code).
-│   ├── network/         # Manages internet calls, API requests, and Firebase database connections securely.
-│   ├── utils/           # Helper functions (formatting time, calculating distances) used across the app to avoid repeating code.
-│   └── viewmodels/      # Stores UI data safely so it isn't lost if the app state changes (e.g., getting a phone call).
-└── res/
-    ├── drawable/        # Contains images, icons, and custom XML shape definitions.
-    └── layout/          # The visual design rules (XML layout files) for all screens.
+├── java/.../transporttrackingsystem/
+│   ├── 📺 activities/  ➔ UI logic. Controls what happens when users interact with screens.
+│   ├── 🔌 adapters/    ➔ The bridge connecting raw Firestore data to visual lists (RecyclerViews).
+│   ├── 📦 models/      ➔ Data blueprints (e.g., shaping how a 'Bus' looks in code).
+│   ├── 🌐 network/     ➔ Secure API requests and Firebase listeners.
+│   ├── 🛠️ utils/       ➔ Reusable helpers (time formatting, distance calculation).
+│   └── 🧠 viewmodels/  ➔ State management. Keeps UI data safe during interruptions.
+└── res/                ➔ Visuals! XML layouts, icons, and Material Design themes.
 ```
 
-### 2. Admin Web Dashboard (`admin-dashboard-web/`)
-The React dashboard is organized into logical feature modules:
+### The React Dashboard (`admin-dashboard-web/src/`)
 ```text
 admin-dashboard-web/src/
-├── assets/              # Stores static files like logos, images, and fonts.
-├── components/          # Reusable UI parts (like buttons, sidebars, or map cards). Built once and used everywhere.
-├── context/             # Manages "Global State" (e.g., holding the currently logged-in Admin's profile data).
-├── hooks/               # Custom React functions handling reusable logic (like authentication checks).
-├── pages/               # The main full-screen views (e.g., Dashboard page, Fleet Management page).
-└── utils/               # Helper JavaScript functions (like sorting algorithms for data tables).
+├── 🖼️ assets/          ➔ Static files (Logos, premium fonts).
+├── 🧩 components/      ➔ Reusable UI blocks (Sidebars, metric cards, map overlays).
+├── 🌍 context/         ➔ Global state managers (User sessions).
+├── 🪝 hooks/           ➔ Custom logic (e.g., checking if an Admin is logged in).
+├── 📄 pages/           ➔ Full-screen dashboard views (Fleet Manager, Complaints).
+└── 🔧 utils/           ➔ Math and sorting algorithms for large data tables.
 ```
+
+---
 
 ## ⚙️ Setup & Installation
 
-### Web Dashboard
+### Running the Web Dashboard
 ```bash
 cd admin-dashboard-web
 npm install
 npm run dev
 ```
+*(Runs securely on localhost with hot-module reloading)*
 
-### Android App
-1.  Open the root folder in **Android Studio**.
-2.  Add your `google-services.json` to the `app/` folder.
-3.  Sync Gradle and Run.
-
-## 📸 Screenshots
-
-### User Application Flow
-| Splash & Welcome | Registration & Login | Map & Tracking |
-| :---: | :---: | :---: |
-| ![Splash](Screenshots/User/2_App_Starts.jpg) | ![Register](Screenshots/User/3_Register_User.jpg) | ![Search](Screenshots/User/8_Search.jpg) |
-| ![Welcome](Screenshots/User/7_Welcome_User.jpg) | ![Login](Screenshots/User/4_Login_Page.jpg) | ![Live Track](Screenshots/User/13_Track_Live_Anbesa_Bus.jpg) |
-
-### Admin Management Flow
-| Dashboard | Fleet Stats | Terminals & Routes |
-| :---: | :---: | :---: |
-| ![Admin Dash](Screenshots/Admin/3_Fleet_Main_Dashboard.jpg) | ![Fleet Stats](Screenshots/Admin/4_Fleet_Statics.jpg) | ![Terminals](Screenshots/Admin/6_Manage_Terminal.jpg) |
-| ![Register Bus](Screenshots/Admin/8_Register_Bus.jpg) | ![Settings](Screenshots/Admin/9_Setting.jpg) | ![News](Screenshots/Admin/10_News.jpg) |
+### Running the Android App
+1. Open the root folder (`TransportTrackingSystem`) in **Android Studio**.
+2. Ensure your `google-services.json` is placed in the `app/` directory.
+3. Click **Sync Project with Gradle Files**.
+4. Press **Run** (Shift+F10) on an emulator or physical device.
 
 ---
-*Developed for Addis Ababa Transport Management.*
+
+## 📸 Visual Gallery
+
+### 🚶 User Application Flow
+| Welcome | Login | Live Map Tracking |
+| :---: | :---: | :---: |
+| <img src="Screenshots/User/2_App_Starts.jpg" width="200"/> | <img src="Screenshots/User/4_Login_Page.jpg" width="200"/> | <img src="Screenshots/User/13_Track_Live_Anbesa_Bus.jpg" width="200"/> |
+
+### 👨‍💼 Admin Command Center
+| Main Dashboard | Fleet Statistics | Route Configuration |
+| :---: | :---: | :---: |
+| <img src="Screenshots/Admin/3_Fleet_Main_Dashboard.jpg" width="250"/> | <img src="Screenshots/Admin/4_Fleet_Statics.jpg" width="250"/> | <img src="Screenshots/Admin/6_Manage_Terminal.jpg" width="250"/> |
+
+<hr/>
+
+<div align="center">
+  <b>Developed for Addis Ababa Transport Management.</b><br>
+  <i>Empowering commuters with data, one ride at a time.</i>
+</div>

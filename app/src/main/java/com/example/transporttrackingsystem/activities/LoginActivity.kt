@@ -72,31 +72,13 @@ class LoginActivity : AppCompatActivity() {
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 
-                // 🔐 HARDCODED ADMIN BYPASS
-                if (email == "bwwmas@gmail.com" && password == "Yotorb123#") {
-                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // 🚀 GO TO WELCOME SCREEN
-                            val intent = Intent(this, WelcomeActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            val exception = task.exception
-                            val message = when (exception) {
-                                is com.google.firebase.FirebaseNetworkException -> "Connection lost. Please check your internet."
-                                is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "Email is incorrect. Please try again."
-                                is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "The email and password is incorrect. Please find the correct details and try again."
-                                else -> "Connection lost or email and password incorrect. Please find the correct details and try again."
-                            }
-
-                            AlertDialog.Builder(this)
-                                .setTitle("Login Failed")
-                                .setMessage(message)
-                                .setPositiveButton("Try Again", null)
-                                .show()
-                        }
-                    }
+                // 🛑 BLOCK ADMIN LOGIN ON MOBILE
+                if (email.lowercase() == "bwwmas@gmail.com") {
+                    AlertDialog.Builder(this)
+                        .setTitle("Access Denied")
+                        .setMessage("Admin accounts can only log in via the Web Dashboard. Please use a passenger account for the mobile app.")
+                        .setPositiveButton("OK", null)
+                        .show()
                     return@setOnClickListener
                 }
 

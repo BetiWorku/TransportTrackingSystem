@@ -55,11 +55,20 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
+import androidx.core.content.ContextCompat
+import androidx.core.app.TaskStackBuilder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.core.view.GravityCompat
+import android.widget.LinearLayout
+import android.graphics.Typeface
+import android.view.Gravity
+import androidx.core.view.isVisible
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -77,10 +86,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val nearbyBuses = mutableListOf<BusInfo>()
     
     // UI Elements
-    private lateinit var tvLocationCoords: TextView
-    private lateinit var tvBusCount: TextView
-    private lateinit var btnLogout: View
-    private lateinit var btnFeedback: View
     private lateinit var btnFilterBuses: View
     private lateinit var etSearchBuses: EditText
     private lateinit var btnPlanTrip: Button
@@ -120,6 +125,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         var mockDist = 3.33
         var mockShegerSecs = 1200
         var mockShegerDist = 5.0
+        var mockWoloSecs = 300 
+        var mockWoloDist = 1.2
         val notifiedBuses = mutableSetOf<String>()
     }
 
@@ -131,6 +138,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var deviceId = "Bus_Unknown"
     private var unreadCount = 0
     private lateinit var tvBadge: TextView
+    
+    // Sidebar Elements
+    private lateinit var drawerLayout: DrawerLayout
+    private var tvTotalBusesDrawer: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,10 +153,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         deviceId = "Bus_" + (auth.currentUser?.uid?.take(5) ?: "Guest")
 
-        tvLocationCoords = findViewById(R.id.locationCoords)
-        tvBusCount = findViewById(R.id.busCount)
-        btnLogout = findViewById(R.id.btnLogout)
-        btnFeedback = findViewById(R.id.btnFeedback)
         btnFilterBuses = findViewById(R.id.btnFilterBuses)
         etSearchBuses = findViewById(R.id.etSearchBuses)
         btnPlanTrip = findViewById(R.id.btnPlanTrip)
@@ -157,6 +164,91 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         
         val btnBell = findViewById<View>(R.id.btnNotificationBell)
         tvBadge = findViewById(R.id.tvNotificationCount)
+        
+        drawerLayout = findViewById(R.id.drawerLayout)
+        tvTotalBusesDrawer = findViewById<TextView>(R.id.tvTotalBusesDrawer)
+        val tvWelcomeUser = findViewById<TextView>(R.id.tvWelcomeUser)
+        
+        val currentUserId = auth.currentUser?.uid
+        if (currentUserId != null) {
+            db.collection("users").document(currentUserId).get().addOnSuccessListener { doc ->
+                val name = doc.getString("name") ?: "User"
+                tvWelcomeUser?.text = "Welcome, $name"
+            }
+        }
+        
+        val btnMenuLogo = findViewById<ImageView>(R.id.btnMenuLogo)
+        btnMenuLogo.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+        
+        // 1. Dashboard
+        findViewById<View>(R.id.navDashboard).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, UserDashboardActivity::class.java))
+        }
+
+        // 2. Live Bus Tracking
+        findViewById<View>(R.id.navLiveTracking).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            Toast.makeText(this, "Showing Live Bus Tracking Map", Toast.LENGTH_SHORT).show()
+        }
+
+        // 3. Routes
+        findViewById<View>(R.id.navRoutes).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            if (routesList.isEmpty()) {
+                Toast.makeText(this, "No active routes available.", Toast.LENGTH_SHORT).show()
+            } else {
+                val routeNames = routesList.map { it.routeName }.toTypedArray()
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Select Active Route")
+                    .setItems(routeNames) { _, which ->
+                        val selectedRoute = routesList[which]
+                        Toast.makeText(this, "Selected: ${selectedRoute.routeName}", Toast.LENGTH_SHORT).show()
+                        val parts = selectedRoute.routeName.split(" to ")
+                        if (parts.size == 2) {
+                            etFrom.setText(parts[0])
+                            etTo.setText(parts[1])
+                            planTrip()
+                        }
+                    }
+                    .setNegativeButton("Close", null)
+                    .show()
+            }
+        }
+
+        // 4. Traffic News
+        findViewById<View>(R.id.navNews).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, UserNewsActivity::class.java))
+        }
+
+        // 5. Send Feedback / Complaint
+        findViewById<View>(R.id.navFeedback).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, ComplaintActivity::class.java))
+        }
+
+        // 6. Notifications
+        findViewById<View>(R.id.navNotifications).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, UserNewsActivity::class.java))
+        }
+
+        // 7. Settings
+        findViewById<View>(R.id.navSettings).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
+        
+        // 8. Sign Out
+        findViewById<View>(R.id.navLogout).setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            auth.signOut()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
         btnBell.setOnClickListener {
             unreadCount = 0
@@ -164,13 +256,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(Intent(this, UserNewsActivity::class.java))
         }
 
-        btnFeedback.setOnClickListener {
-            startActivity(Intent(this, ComplaintActivity::class.java))
-        }
-
         val layoutSearchContainer = findViewById<View>(R.id.layoutSearchContainer)
         btnFilterBuses.setOnClickListener {
-            if (layoutSearchContainer.visibility == View.VISIBLE) {
+            if (layoutSearchContainer.isVisible) {
                 layoutSearchContainer.visibility = View.GONE
                 etSearchBuses.setText("")
             } else {
@@ -217,29 +305,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
 
-
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_map -> {
-                    Toast.makeText(this, "Map View", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_news -> {
-                    startActivity(Intent(this, UserNewsActivity::class.java))
-                    true
-                }
-                R.id.nav_complaint -> {
-                    startActivity(Intent(this, ComplaintActivity::class.java))
-                    true
-                }
-                R.id.nav_settings -> {
-                    startActivity(Intent(this, SettingsActivity::class.java))
-                    true
-                }
-                else -> false
-            }
-        }
 
         fetchRoutesAndStops()
         checkLocationPermissions()
@@ -341,13 +406,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        createNotificationChannel()
-
-        btnLogout.setOnClickListener {
-            auth.signOut()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-        }
+        setupBusListener()
+        listenToComplaintReplies()
 
 
 
@@ -387,16 +447,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             return
         }
 
-        // 🔍 More robust search: find stop that starts with or contains the query
-        val fromStop = stopsList.find { it.stopName.equals(fromQuery, true) } 
-            ?: stopsList.find { it.stopName.contains(fromQuery, true) }
-        val toStop = stopsList.find { it.stopName.equals(toQuery, true) }
-            ?: stopsList.find { it.stopName.contains(toQuery, true) }
+        // 🎯 ULTIMATE FIX: Sort by name length to find the most SPECIFIC match first
+        val fromStop = stopsList.filter { it.stopName.contains(fromQuery, true) }
+            .minByOrNull { it.stopName.length }
+
+        val toStop = stopsList.filter { it.stopName.contains(toQuery, true) && it.stopId != fromStop?.stopId }
+            .minByOrNull { it.stopName.length }
+            ?: stopsList.filter { it.stopName.contains(toQuery, true) }
+                .minByOrNull { it.stopName.length }
 
         if (fromStop == null || toStop == null) {
-            Toast.makeText(this, "Stop not found! Try: Bole, Mexico, Stadium...", Toast.LENGTH_LONG).show()
+            val missing = if (fromStop == null) fromQuery else toQuery
+            Toast.makeText(this, "Stop '$missing' not found! Try: Bole, Stadium, Piyasa...", Toast.LENGTH_LONG).show()
             return
         }
+
+        // Route found — proceed
 
         // 🛑 VALIDATION: Ensure coordinates are valid (Addis Ababa is ~9.0, 38.7)
         var fromPos = LatLng(fromStop.latitude, fromStop.longitude)
@@ -416,13 +482,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             return
         }
 
-        if (fromStop.stopId == toStop.stopId) {
+        // 🛑 FINAL VALIDATION: Use stopId if available, else compare by stopName
+        val fromKey = fromStop.stopId.ifEmpty { fromStop.stopName }
+        val toKey = toStop.stopId.ifEmpty { toStop.stopName }
+        val isSameStop = fromKey == toKey
+        val isSameCoord = fromPos.latitude == toPos.latitude && fromPos.longitude == toPos.longitude
+
+        if (isSameStop) {
             Toast.makeText(this, "Start and Destination cannot be the same stop!", Toast.LENGTH_SHORT).show()
             return
+        }
+        
+        if (isSameCoord) {
+            // 🧪 TEST MODE: Allow same coordinates but warn the user
+            Toast.makeText(this, "Testing Mode: Using mock distance for same coordinates.", Toast.LENGTH_SHORT).show()
         }
 
         currentRouteStart = fromPos
         currentRouteEnd = toPos
+        
+        // 🛰️ Notify Admin of this search activity
+        logRouteAlert(fromStop.stopName, toStop.stopName)
 
         // 📍 Add/Update Start & End Markers
         startMarker?.remove()
@@ -499,18 +579,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         
         // 🧪 HARDCODED TEST: Setup mock values before refreshing list
         val isSheger = toQuery.contains("Sheger", true) || fromQuery.contains("Sheger", true)
-        val isMegenagna = toQuery.contains("Megenagna", true) || fromQuery.contains("Megenagna", true) || toQuery.contains("BoleBulbula", true) || toQuery.contains("Station", true) || fromQuery.contains("Station", true) || toQuery.contains("Abado", true)
+        val isMegenagna = toQuery.contains("Megenagna", true) || fromQuery.contains("Megenagna", true) || toQuery.contains("BoleBulbula", true) || toQuery.contains("Abado", true)
+        val isWolo = toQuery.contains("Stadium", true) || fromQuery.contains("WoloSefer", true) || toQuery.contains("WoloSefer", true)
 
-        if (isSheger || isMegenagna) {
+        if (isSheger || isMegenagna || isWolo) {
             isMockTestActive = true
-            // Reset both mock values to start fresh
-            mockSecs = 600
-            mockDist = 3.33
+            mockSecs = 300 // ⏱️ 5 minutes default
+            mockDist = 1.5
             mockShegerSecs = 1200
             mockShegerDist = 5.0
-            
+            mockWoloSecs = 300 // ⏱️ HARDCODED: Wolo-25-01 starts at 5 minutes
+            mockWoloDist = 1.2
+
             if (isSheger) {
                 sendArrivalNotification("Sheger Bus approaching in 20 mins", 20)
+            }
+            if (isMegenagna) {
+                sendArrivalNotification("Megenagna Bus approaching in 10 mins", 10)
+            }
+            if (isWolo) {
+                sendArrivalNotification("🔔 Anbessa Wolo-25-01 is 5 minutes away! Get ready.", 5)
             }
         } else {
             isMockTestActive = false
@@ -564,14 +652,69 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Bus Arrival"
-            val descriptionText = "Notifications for bus arrivals"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel("ARRIVE_CHANNEL", name, importance).apply {
-                description = descriptionText
-            }
             val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            
+            // 🚌 Channel 1: Arrivals
+            val channel1 = NotificationChannel("ARRIVE_CHANNEL", "Bus Arrival", NotificationManager.IMPORTANCE_HIGH).apply {
+                description = "Notifications for bus arrivals"
+            }
+            manager.createNotificationChannel(channel1)
+
+            // 💬 Channel 2: Admin Replies
+            val channel2 = NotificationChannel("COMPLAINTS_CHANNEL", "Admin Replies", NotificationManager.IMPORTANCE_HIGH).apply {
+                description = "Notifications for admin feedback responses"
+                enableLights(true)
+                lightColor = Color.BLUE
+                vibrationPattern = longArrayOf(0, 500, 200, 500)
+                enableVibration(true)
+            }
+            manager.createNotificationChannel(channel2)
+        }
+    }
+
+    private fun setupComplaintReplyListener() {
+        val user = auth.currentUser ?: return
+        
+        db.collection("complaints")
+            .whereEqualTo("userId", user.uid)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) return@addSnapshotListener
+                
+                val prefs = getSharedPreferences("ComplaintsPrefs", MODE_PRIVATE)
+                val notifiedIds = prefs.getStringSet("notified_reply_ids", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+
+                snapshots?.forEach { doc ->
+                    val complaint = doc.toObject(Complaint::class.java)
+                    if (complaint.adminReply.isNotEmpty() && !notifiedIds.contains(complaint.id)) {
+                        sendComplaintReplyNotification(complaint)
+                        notifiedIds.add(complaint.id)
+                    }
+                }
+
+                prefs.edit { putStringSet("notified_reply_ids", notifiedIds) }
+            }
+    }
+
+    private fun sendComplaintReplyNotification(complaint: Complaint) {
+        val intent = Intent(this, ComplaintActivity::class.java).apply {
+            putExtra("HIGHLIGHT_COMPLAINT_ID", complaint.id)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(this, complaint.id.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val builder = NotificationCompat.Builder(this, "COMPLAINTS_CHANNEL")
+            .setSmallIcon(android.R.drawable.stat_notify_chat)
+            .setContentTitle("New Admin Reply")
+            .setContentText("Admin replied to your report: \"${complaint.subject}\"")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .setVibrate(longArrayOf(0, 500, 200, 500))
+
+        with(NotificationManagerCompat.from(this)) {
+            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notify(complaint.id.hashCode(), builder.build())
+            }
         }
     }
 
@@ -652,7 +795,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             if (id != null && busMarkers.containsKey(id.split(" -> ")[0])) calculateETA(marker.position)
             false
         }
-        listenToBusUpdates()
+        setupBusListener()
     }
 
     private fun calculateETA(busPos: LatLng) {
@@ -705,7 +848,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun listenToBusUpdates() {
+    private fun setupBusListener() {
         db.collection("buses").addSnapshotListener { snapshots, _ ->
             if (snapshots == null) return@addSnapshotListener
             latestSnapshots = snapshots
@@ -721,8 +864,40 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
             refreshBusList()
+            updateDashboardSidebar(snapshots)
         }
-        listenToComplaintReplies()
+    }
+
+    private fun updateDashboardSidebar(snapshots: QuerySnapshot) {
+        var totalBuses = 0
+        val routeCounts = mutableMapOf<String, Int>()
+
+        snapshots.forEach { doc ->
+            val busType = doc.getString("busType") ?: ""
+            val terminal = doc.getString("terminal") ?: ""
+            if (busType.isEmpty() || busType.contains("Unknown", ignoreCase = true)) return@forEach
+            if (terminal.isEmpty() || terminal.contains("Unknown", ignoreCase = true)) return@forEach
+            
+            val busIdField = doc.getString("busId") ?: ""
+            val id = if (busIdField.isNotEmpty()) busIdField else doc.id
+            if (id == deviceId) return@forEach
+
+            totalBuses++
+            
+            val routeId = doc.getString("routeId") ?: ""
+            val stopsForRoute = stopsList.filter { it.routeId == routeId }.sortedBy { it.stopOrder }
+            val routeName = if (stopsForRoute.isNotEmpty()) {
+                val start = stopsForRoute.first().stopName
+                val end = stopsForRoute.last().stopName
+                "$start to $end"
+            } else {
+                "Route to $terminal"
+            }
+
+            routeCounts[routeName] = routeCounts.getOrDefault(routeName, 0) + 1
+        }
+
+        tvTotalBusesDrawer?.text = "Active Buses: $totalBuses"
     }
 
     private fun listenToComplaintReplies() {
@@ -746,10 +921,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun processReplies(snapshots: com.google.firebase.firestore.QuerySnapshot?) {
-        val prefs = getSharedPreferences("ComplaintsPrefs", Context.MODE_PRIVATE)
+    private fun processReplies(snapshots: QuerySnapshot?) {
+        val prefs = getSharedPreferences("ComplaintsPrefs", MODE_PRIVATE)
         val notifiedIds = prefs.getStringSet("notified_ids", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
-        var changed = false
 
         snapshots?.forEach { doc ->
             val id = doc.id
@@ -759,12 +933,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             if (reply.isNotEmpty() && !notifiedIds.contains(id)) {
                 sendComplaintNotification(id, subject, reply)
                 notifiedIds.add(id)
-                changed = true
             }
         }
 
-        if (changed) {
-            prefs.edit().putStringSet("notified_ids", notifiedIds).apply()
+        prefs.edit {
+            putStringSet("notified_ids", notifiedIds)
         }
     }
 
@@ -774,7 +947,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         
         // World-class practice: Use TaskStackBuilder to preserve navigation history
-        val pendingIntent = androidx.core.app.TaskStackBuilder.create(this).run {
+        val pendingIntent = TaskStackBuilder.create(this).run {
             addNextIntentWithParentStack(intent)
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
@@ -808,7 +981,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         if (::mMap.isInitialized) {
             // Part 1: Update or add bus markers on the map
             for (doc in snapshots) {
-                val id = doc.id
+                val busIdField = doc.getString("busId") ?: ""
+                val id = if (busIdField.isNotEmpty()) busIdField else doc.id
+                
                 val busType = doc.getString("busType") ?: ""
                 val terminal = doc.getString("terminal") ?: ""
                 
@@ -833,7 +1008,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Part 2: Calculate data for the "Nearby Buses" list
         snapshots.forEach { doc ->
-            val id = doc.id
+            // 🎯 FIX: Prioritize the 'busId' field over the Firestore document ID
+            val busIdField = doc.getString("busId") ?: ""
+            val id = if (busIdField.isNotEmpty()) busIdField else doc.id
+            
             val busType = doc.getString("busType") ?: ""
             val terminal = doc.getString("terminal") ?: ""
             
@@ -865,13 +1043,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val startStop = if (startQuery.isNotEmpty()) stopsForRoute.find { it.stopName.contains(startQuery, true) } else null
             val endStop = if (endQuery.isNotEmpty()) stopsForRoute.find { it.stopName.contains(endQuery, true) } else null
             
+            // 🎯 ULTIMATE BEST LOGIC: Only "BEST" if the bus actually serves BOTH your start and end stops in order
             val isBest = if (startStop != null && endStop != null) {
-                // ✅ Check if BOTH stops exist AND the bus is going in the right direction
+                // ✅ Check if BOTH stops exist ON THIS BUS'S ROUTE AND it's going in the right direction
                 startStop.stopOrder < endStop.stopOrder
             } else {
-                endQuery.isNotEmpty() && (terminal.contains(endQuery, true) || nextStopName.contains(endQuery, true))
+                // If we don't have a full route search, match if the terminal CONTAINS the destination (fixes WoloSefer-Stadium)
+                endQuery.isNotEmpty() && terminal.contains(endQuery, true)
             }
             
+            // 🔄 DIRECTION FILTER: If the user is searching for a specific route, HIDE everything that isn't the BEST match.
             if (currentRouteStart != null && !isBest) {
                 busMarkers[id]?.remove()
                 busMarkers.remove(id)
@@ -881,7 +1062,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val passengers = doc.getLong("passengers")?.toInt() ?: 0
             val capacity = doc.getLong("capacity")?.toInt() ?: 30
             
-            var currentStopId = ""
             var foundCurrent = false
             for (stop in stopsForRoute) {
                 if (stop.latitude == 0.0 || stop.longitude == 0.0) continue // 🛑 Skip invalid data
@@ -891,7 +1071,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 
                 if (d < 250) { // Within 250m of a stop
                     currentStopName = stop.stopName
-                    currentStopId = stop.stopId
                     val next = stopsForRoute.find { it.stopOrder == stop.stopOrder + 1 }
                     nextStopName = next?.stopName ?: "Final Destination"
                     nextStopPos = next?.let { LatLng(it.latitude, it.longitude) }
@@ -979,6 +1158,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             dist = mockShegerDist.toFloat()
                             timeSecs = mockShegerSecs
                         }
+                        id.contains("Wolo-25-01", true) -> {
+                            // 🎯 HARDCODED: Wolo-25-01 always starts at 5 minutes
+                            dist = mockWoloDist.toFloat()
+                            timeSecs = mockWoloSecs
+                        }
                         terminal.contains("BoleBulbula", true) || terminal.contains("Megenagna", true) -> {
                             dist = mockDist.toFloat()
                             timeSecs = mockSecs
@@ -1040,9 +1224,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 if (id == boardedBusId) {
                     tvOnboardNextStop.text = nextStopName
-                    tvOnboardEta.text = if (m > 0) "$m mins" else "Arriving..."
+                    tvOnboardEta.text = if (m > 0) getString(R.string.mins_label, m) else getString(R.string.arriving_status)
                     val onboardTotalInfo = if (totalDistStr.isNotEmpty()) " (Total: $totalDistStr)" else ""
-                    tvOnboardDist.text = "$distStr to $nextStopName$onboardTotalInfo"
+                    tvOnboardDist.text = getString(R.string.dist_to_next_with_total, distStr, nextStopName, onboardTotalInfo)
                     val progress = (100 - (dist * 20).coerceIn(0f, 100f)).toInt()
                     tripProgress.setProgress(progress, true)
                 }
@@ -1055,33 +1239,40 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         
         val sortedList = nearbyBuses.sortedWith(compareBy({ !it.id.contains("BEST", true) }, { it.sortSecs }))
         busAdapter.updateData(sortedList)
-        tvBusCount.text = getString(R.string.active_buses, nearbyBuses.size)
     }
 
     private fun updateETAsLocally() {
         if (nearbyBuses.isEmpty()) return
         
-        var changed = false
         val updatedList = nearbyBuses.map { bus ->
             if (bus.sortSecs > 0 && bus.sortSecs < Int.MAX_VALUE) { 
-                changed = true
                 if (isMockTestActive && bus.id.contains("BEST")) {
-                    if (bus.id.contains("Sheger", true)) {
-                        mockShegerSecs = (mockShegerSecs - 1).coerceAtLeast(0)
-                        mockShegerDist = (mockShegerDist - (1.0 / 180.0)).coerceAtLeast(0.0)
-                        bus.sortSecs = mockShegerSecs
-                        bus.distKm = mockShegerDist
-                    } else {
-                        mockSecs = (mockSecs - 1).coerceAtLeast(0)
-                        mockDist = (mockDist - (1.0 / 180.0)).coerceAtLeast(0.0)
-                        bus.sortSecs = mockSecs
-                        bus.distKm = mockDist
+                    when {
+                        bus.id.contains("Sheger", true) -> {
+                            mockShegerSecs = (mockShegerSecs - 1).coerceAtLeast(0)
+                            mockShegerDist = (mockShegerDist - (1.0 / 180.0)).coerceAtLeast(0.0)
+                            bus.sortSecs = mockShegerSecs
+                            bus.distKm = mockShegerDist
+                        }
+                        bus.id.contains("Wolo-25-01", true) -> {
+                            mockWoloSecs = (mockWoloSecs - 1).coerceAtLeast(0)
+                            mockWoloDist = (mockWoloDist - (1.0 / 180.0)).coerceAtLeast(0.0)
+                            bus.sortSecs = mockWoloSecs
+                            bus.distKm = mockWoloDist
+                        }
+                        else -> {
+                            mockSecs = (mockSecs - 1).coerceAtLeast(0)
+                            mockDist = (mockDist - (1.0 / 180.0)).coerceAtLeast(0.0)
+                            bus.sortSecs = mockSecs
+                            bus.distKm = mockDist
+                        }
                     }
                 }
                 val newSecs = bus.sortSecs
                 
                 // 🔔 Intelligent Milestone Notifications (Only send the most relevant ONE at a time)
                 val milestoneKey = when {
+                    newSecs <= 0 -> "arriving"
                     newSecs <= 120 -> "2min"
                     newSecs <= 300 -> "5min"
                     newSecs <= 600 -> "10min"
@@ -1092,16 +1283,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 if (milestoneKey != null && !notifiedBuses.contains("${bus.id}_$milestoneKey")) {
                     // Mark ALL higher milestones as 'notified' so they don't fire late
-                    listOf("2min", "5min", "10min", "15min", "20min").forEach { key ->
-                        if (key == milestoneKey || key.removeSuffix("min").toInt() > milestoneKey.removeSuffix("min").toInt()) {
+                    listOf("arriving", "2min", "5min", "10min", "15min", "20min").forEach { key ->
+                        if (key == milestoneKey || (key != "arriving" && milestoneKey != "arriving" && key.removeSuffix("min").toInt() > milestoneKey.removeSuffix("min").toInt())) {
                             notifiedBuses.add("${bus.id}_$key")
                         }
                     }
                     
-                    val mins = milestoneKey.removeSuffix("min").toInt()
-                    val alertMsg = if (mins <= 2) "🔔 Almost there! Your bus ${bus.id.replace("⭐ BEST: ", "")} is $mins minutes away!"
-                                  else "🔔 Your bus ${bus.id.replace("⭐ BEST: ", "")} is $mins minutes away!"
-                    sendArrivalNotification(alertMsg, mins)
+                    val alertMsg = when (milestoneKey) {
+                        "arriving" -> "🎯 Your bus ${bus.id.replace("⭐ BEST: ", "")} HAS ARRIVED! Get ready to board."
+                        "2min" -> "🔔 Almost there! Your bus ${bus.id.replace("⭐ BEST: ", "")} is 2 minutes away!"
+                        else -> "🔔 Your bus ${bus.id.replace("⭐ BEST: ", "")} is ${milestoneKey.removeSuffix("min")} minutes away!"
+                    }
+                    sendArrivalNotification(alertMsg, if (milestoneKey == "arriving") 0 else milestoneKey.removeSuffix("min").toInt())
                 }
 
                 val m = newSecs / 60
@@ -1215,8 +1408,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun updateFirestoreLocation(lat: Double, lng: Double) {
         if (lat == 0.0 || lng == 0.0) return // Don't update if location is not ready
         
-        tvLocationCoords.text = getString(R.string.location_coords, lat, lng)
-
         val data = hashMapOf(
             "latitude" to lat, 
             "longitude" to lng, 
@@ -1252,5 +1443,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onPause() {
         super.onPause()
         countdownHandler.removeCallbacks(countdownRunnable)
+    }
+    private fun logRouteAlert(from: String, to: String) {
+        val user = auth.currentUser ?: return
+        val alert = hashMapOf(
+            "userId" to user.uid,
+            "userEmail" to (user.email ?: "Guest"),
+            "from" to from,
+            "to" to to,
+            "timestamp" to com.google.firebase.Timestamp.now(),
+            "type" to "route_search"
+        )
+        db.collection("route_alerts").add(alert)
     }
 }

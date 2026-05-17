@@ -71,9 +71,6 @@
         <!-- 🚀 SETTINGS ACTIVITY -->
         <activity android:name=".activities.SettingsActivity" />
 
-        <!-- 🚀 BUS REGISTRATION ACTIVITY (Admin) -->
-        <activity android:name=".activities.BusRegistrationActivity" />
-
         <!-- 🚀 BUS DETAILS ACTIVITY -->
         <activity android:name=".activities.BusDetailsActivity" />
 
@@ -87,6 +84,8 @@
         <activity 
             android:name=".activities.ComplaintActivity"
             android:parentActivityName=".activities.MainActivity" />
+
+        <activity android:name=".activities.UserDashboardActivity" />
 
         <receiver android:name=".utils.NotificationActionReceiver" android:exported="false">
             <intent-filter>

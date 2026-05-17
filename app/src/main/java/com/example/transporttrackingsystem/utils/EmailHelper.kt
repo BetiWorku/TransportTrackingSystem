@@ -1,6 +1,5 @@
 package com.example.transporttrackingsystem.utils
 
-import android.os.AsyncTask
 import android.util.Log
 import java.util.Properties
 import javax.mail.Authenticator
