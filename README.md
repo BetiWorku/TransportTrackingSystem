@@ -29,12 +29,12 @@ Addis Transport is a comprehensive, dual-platform ecosystem designed to revoluti
 
 ---
 
-## 🚀 Today's Major Updates (May 16, 2026)
+## 🚀 Today's Major Updates (May 17, 2026)
 
-*   💎 **Premium Admin Gateway**: Redesigned Web Login into a high-end, two-column enterprise interface with live fleet telemetry.
-*   📱 **Full Mobile Responsiveness**: Implemented a slide-over navigation system and perfectly centered forms for mobile dashboard management.
-*   ⚡ **Live Data Integration**: Connected the login screen to live Firestore metrics to show active vehicle counts instantly.
-*   🔔 **Optimized Workflows**: Synchronized notification badges with database states for accurate real-time alerting.
+*   📧 **Secure Email OTP Pipeline**: Re-implemented the OTP email delivery using standard **JavaMail SSL (Port 465)**, fixing the "Could not convert socket to TLS" error. Enabled secure end-to-end delivery of 6-digit codes to user inboxes.
+*   🔒 **Secure OTP Flow**: Removed the on-screen helper code from the verification screen to ensure the security flow is authentic and the code is obtained exclusively from the user's inbox.
+*   👥 **Admin User List Fixed**: Removed `limit(2)` restriction in the admin dashboard query to ensure **all registered users** show up in real-time.
+*   🗑️ **Robust User Deletion**: Reorganized React hooks and fully repaired the 🗑️ **Delete User** action with prompt confirmation and direct Firestore synchronization. Secured administrator profiles from accidental deletion using case-insensitive check guards.
 
 ---
 

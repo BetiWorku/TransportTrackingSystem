@@ -11,12 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.transporttrackingsystem.R
 import com.example.transporttrackingsystem.adapters.BusAdapter
 import com.example.transporttrackingsystem.adapters.BusInfo
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
 class UserDashboardActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
     private lateinit var rvFleet: RecyclerView
     private lateinit var busAdapter: BusAdapter
     private val fleetList = mutableListOf<BusInfo>()
@@ -28,12 +30,15 @@ class UserDashboardActivity : AppCompatActivity() {
     
     private var statsListener: ListenerRegistration? = null
     private var fleetListener: ListenerRegistration? = null
+    private var complaintsListener: ListenerRegistration? = null
+    private var routesListener: ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_dashboard)
 
         db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         // Initialize UI
         tvTotalBuses = findViewById(R.id.tvDashTotalBuses)
@@ -69,6 +74,8 @@ class UserDashboardActivity : AppCompatActivity() {
         // Remove old listeners if any
         statsListener?.remove()
         fleetListener?.remove()
+        complaintsListener?.remove()
+        routesListener?.remove()
 
         // 1. Fetch System Metrics
         statsListener = db.collection("buses").addSnapshotListener { snapshot, _ ->
@@ -85,15 +92,22 @@ class UserDashboardActivity : AppCompatActivity() {
             tvFleetCount.text = "Active Fleet ($total)"
         }
 
-        db.collection("complaints").whereEqualTo("status", "pending").addSnapshotListener { snapshot, _ ->
-            tvPending.text = (snapshot?.size() ?: 0).toString()
+        // Filter pending complaints by the current user's ID
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            complaintsListener = db.collection("complaints")
+                .whereEqualTo("userId", currentUser.uid)
+                .whereEqualTo("status", "pending")
+                .addSnapshotListener { snapshot, _ ->
+                    tvPending.text = (snapshot?.size() ?: 0).toString()
+                }
+        } else {
+            tvPending.text = "0"
         }
 
-        db.collection("routes").addSnapshotListener { snapshot, _ ->
+        routesListener = db.collection("routes").addSnapshotListener { snapshot, _ ->
             tvRoutes.text = (snapshot?.size() ?: 0).toString()
         }
-
-
 
         // 2. Fetch Fleet List
         fleetListener = db.collection("buses")
@@ -137,5 +151,7 @@ class UserDashboardActivity : AppCompatActivity() {
         super.onDestroy()
         statsListener?.remove()
         fleetListener?.remove()
+        complaintsListener?.remove()
+        routesListener?.remove()
     }
 }

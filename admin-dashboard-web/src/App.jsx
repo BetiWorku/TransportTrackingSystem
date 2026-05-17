@@ -13,7 +13,8 @@ import {
   X,
   Map as MapIcon,
   PlusCircle,
-  FileText
+  FileText,
+  Users
 } from 'lucide-react';
 
 import { db } from './firebase';
@@ -28,10 +29,11 @@ import {
   LiveMap,
   TerminalsManagement,
   RegisterBus,
-  SettingsPage as Settings
+  SettingsPage as Settings,
+  UsersList
 } from './components/DashboardComponents';
 
-const SidebarItem = ({ icon: Icon, label, path, active, badge, onClick }) => (
+const SidebarItem = ({ icon: Icon, label, path, active, badge, badgeColor = "bg-red-500 animate-pulse", onClick }) => (
   <Link
     to={path}
     onClick={onClick}
@@ -45,7 +47,7 @@ const SidebarItem = ({ icon: Icon, label, path, active, badge, onClick }) => (
       <span className="font-medium whitespace-nowrap overflow-hidden">{label}</span>
     </div>
     {badge > 0 && (
-      <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
+      <span className={`${badgeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded-full`}>
         {badge}
       </span>
     )}
@@ -77,6 +79,12 @@ function App() {
 
   useEffect(() => {
     return onSnapshot(collection(db, "buses"), (snap) => setTotalBuses(snap.size));
+  }, []);
+
+  const [totalUsers, setTotalUsers] = useState(0);
+
+  useEffect(() => {
+    return onSnapshot(collection(db, "users"), (snap) => setTotalUsers(snap.size));
   }, []);
 
   useEffect(() => {
@@ -215,6 +223,15 @@ function App() {
             badge={pendingComplaints}
             onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
           />
+          <SidebarItem
+            icon={Users}
+            label={isSidebarOpen ? "Registered Users" : ""}
+            path="/users"
+            active={location.pathname === "/users"}
+            badge={totalUsers}
+            badgeColor="bg-blue-600 animate-pulse"
+            onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
+          />
         </nav>
 
         <div className="p-4 border-t border-gray-100">
@@ -335,6 +352,7 @@ function App() {
             <Route path="/routes" element={<RouteManagement searchQuery={searchQuery} />} />
             <Route path="/news" element={<NewsManagement searchQuery={searchQuery} />} />
             <Route path="/complaints" element={<ComplaintsManagement searchQuery={searchQuery} />} />
+            <Route path="/users" element={<UsersList searchQuery={searchQuery} />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

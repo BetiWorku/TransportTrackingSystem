@@ -25,7 +25,7 @@ import {
 import { getAuth, updatePassword } from 'firebase/auth';
 import { db } from '../firebase';
 import {
-  collection, onSnapshot, query, doc, deleteDoc, updateDoc, addDoc, serverTimestamp, orderBy, where, setDoc, getDocs, writeBatch
+  collection, onSnapshot, query, doc, deleteDoc, updateDoc, addDoc, serverTimestamp, orderBy, where, setDoc, getDocs, writeBatch, limit
 } from 'firebase/firestore';
 
 // --- HELPERS ---
@@ -46,7 +46,8 @@ export const DashboardHome = () => {
     activeBuses: 0,
     totalRoutes: 0,
     totalStops: 0,
-    pendingComplaints: 0
+    pendingComplaints: 0,
+    totalUsers: 0
   });
 
   useEffect(() => {
@@ -74,7 +75,12 @@ export const DashboardHome = () => {
       setStats(p => ({ ...p, totalStops: snap.size }));
     });
 
-    return () => { unsubBuses(); unsubComp(); unsubRoutes(); unsubStops(); };
+    // 5. Users Stats
+    const unsubUsers = onSnapshot(collection(db, "users"), (snap) => {
+      setStats(p => ({ ...p, totalUsers: snap.size }));
+    });
+
+    return () => { unsubBuses(); unsubComp(); unsubRoutes(); unsubStops(); unsubUsers(); };
   }, []);
 
   return (
@@ -82,9 +88,10 @@ export const DashboardHome = () => {
       <h1 className="text-2xl font-bold text-gray-800 mb-2">Fleet Dashboard</h1>
       <p className="text-gray-500 mb-8">Real-time status of your transport network.</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <StatCard icon={BusIcon} label="Total Buses" value={stats.totalBuses} color="bg-blue-500" />
         <StatCard icon={CheckCircle} label="Active Vehicles" value={stats.activeBuses} color="bg-green-500" />
+        <StatCard icon={Users} label="Registered Users" value={stats.totalUsers} color="bg-orange-500" />
         <StatCard icon={MapIcon} label="Active Routes" value={stats.totalRoutes} color="bg-indigo-500" />
         <StatCard icon={MapPin} label="Total Fermatas" value={stats.totalStops} color="bg-purple-500" />
       </div>
@@ -127,7 +134,7 @@ export const DashboardHome = () => {
 export const BusManagement = ({ searchQuery = "" }) => {
   const [buses, setBuses] = useState([]);
   const [editingBus, setEditingBus] = useState(null);
-  const [stats, setStats] = useState({ totalBuses: 0, activeBuses: 0, pendingComplaints: 0 });
+  const [stats, setStats] = useState({ totalBuses: 0, activeBuses: 0, pendingComplaints: 0, totalUsers: 0 });
 
   useEffect(() => {
     // 1. Listen for Buses
@@ -144,7 +151,12 @@ export const BusManagement = ({ searchQuery = "" }) => {
       setStats(prev => ({ ...prev, pendingComplaints: snap.size }));
     });
 
-    return () => { unsubBuses(); unsubComp(); };
+    // 3. Listen for Total Users
+    const unsubUsers = onSnapshot(collection(db, "users"), (snap) => {
+      setStats(prev => ({ ...prev, totalUsers: snap.size }));
+    });
+
+    return () => { unsubBuses(); unsubComp(); unsubUsers(); };
   }, []);
 
   const handleDelete = async (id) => {
@@ -205,26 +217,33 @@ export const BusManagement = ({ searchQuery = "" }) => {
       </div>
 
       {/* Real-time Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-8 lg:mb-10">
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-10">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 text-left">
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><BusIcon size={24} /></div>
           <div>
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Total Fleet</p>
-            <p className="text-2xl font-black text-gray-800">{stats.totalBuses}</p>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest font-sans">Total Fleet</p>
+            <p className="text-2xl font-black text-gray-800 font-sans">{stats.totalBuses}</p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 text-left">
           <div className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center"><CheckCircle size={24} /></div>
           <div>
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Active Now</p>
-            <p className="text-2xl font-black text-gray-800">{stats.activeBuses}</p>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest font-sans">Active Now</p>
+            <p className="text-2xl font-black text-gray-800 font-sans">{stats.activeBuses}</p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 text-left">
+          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center"><Users size={24} /></div>
+          <div>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest font-sans">Total Users</p>
+            <p className="text-2xl font-black text-gray-800 font-sans">{stats.totalUsers}</p>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 text-left">
           <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center"><AlertTriangle size={24} /></div>
           <div>
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Pending Reports</p>
-            <p className="text-2xl font-black text-gray-800">{stats.pendingComplaints}</p>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest font-sans">Pending Reports</p>
+            <p className="text-2xl font-black text-gray-800 font-sans">{stats.pendingComplaints}</p>
           </div>
         </div>
       </div>
@@ -1092,6 +1111,144 @@ export const NewsManagement = ({ searchQuery = "" }) => {
             </div>
           )) : (
             <div className="text-center py-12 text-gray-400 italic bg-white rounded-2xl border border-dashed border-gray-100">No news found matching your search.</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- COMPONENT: USERS LIST ---
+export const UsersList = ({ searchQuery = "" }) => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(null);
+
+  useEffect(() => {
+    const q = query(collection(db, "users"));
+    return onSnapshot(q, (snap) => {
+      const u = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setUsers(u);
+      setLoading(false);
+    });
+  }, []);
+
+  const filteredUsers = users.filter(user =>
+    (user.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (user.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (user.role || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleDelete = async (id, role, email) => {
+    const displayEmail = email || "this user";
+    if (role === "Admin" || role === "ADMIN") {
+      alert("You cannot delete an Administrator!");
+      return;
+    }
+
+    if (!window.confirm(`Are you sure you want to delete user "${displayEmail}"?`)) {
+      return;
+    }
+
+    setDeleting(id);
+    try {
+      await deleteDoc(doc(db, "users", id));
+      alert(`User "${displayEmail}" deleted successfully.`);
+    } catch (err) {
+      alert("Error deleting user: " + err.message);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleToggleVerify = async (id, currentStatus) => {
+    try {
+      await updateDoc(doc(db, "users", id), { isVerified: !currentStatus });
+      alert("User verification status updated!");
+    } catch (err) {
+      alert("Error updating status: " + err.message);
+    }
+  };
+
+  return (
+    <div className="p-8 text-left animate-in fade-in duration-500">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Registered Users</h1>
+          <p className="text-gray-500">View and manage passenger profiles and verification status.</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          {loading ? (
+            <div className="py-20 text-center text-gray-400 italic">Loading users database...</div>
+          ) : (
+            <table className="w-full text-left border-collapse min-w-[800px] lg:min-w-0">
+              <thead className="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">User Profile</th>
+                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Email Address</th>
+                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Role</th>
+                  <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">OTP Verified</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border ${user.role === 'Admin' ? 'bg-orange-50 border-orange-100 text-orange-600' : 'bg-primary-50 border-primary-100 text-primary-600'}`}>
+                            {user.name ? user.name[0].toUpperCase() : 'U'}
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-800">{user.name || "Anonymous"}</p>
+                            <p className="text-xs text-gray-400">UID: {user.id}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 font-medium">
+                        {user.email || "No Email"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${user.role === 'Admin' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
+                          {user.role || "Commuter"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleToggleVerify(user.id, user.isVerified)}
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${user.isVerified ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-red-100 text-red-600 hover:bg-red-200'}`}
+                        >
+                          {user.isVerified ? "Verified" : "Unverified"}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {user.role?.toLowerCase() !== 'admin' && (
+                          <button
+                            onClick={() => handleDelete(user.id, user.role, user.email)}
+                            disabled={deleting === user.id}
+                            className={`p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors ${deleting === user.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            {deleting === user.id ? (
+                              <RefreshCw size={18} className="animate-spin" />
+                            ) : (
+                              <Trash2 size={18} />
+                            )}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-20 text-center text-gray-400 italic">No registered users match your search.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           )}
         </div>
       </div>

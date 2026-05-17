@@ -63,6 +63,9 @@
         <!-- 🚀 REGISTER ACTIVITY -->
         <activity android:name=".activities.RegisterActivity" />
 
+        <!-- 🚀 OTP VERIFICATION ACTIVITY -->
+        <activity android:name=".activities.OtpVerificationActivity" />
+
         <!-- 🚀 MAIN MAP ACTIVITY -->
         <activity 
             android:name=".activities.MainActivity"

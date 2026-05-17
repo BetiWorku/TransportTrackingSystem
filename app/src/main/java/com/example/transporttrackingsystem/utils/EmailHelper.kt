@@ -1,6 +1,9 @@
 package com.example.transporttrackingsystem.utils
 
+import android.app.Activity
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import java.util.Properties
 import javax.mail.Authenticator
 import javax.mail.Message
@@ -12,73 +15,105 @@ import javax.mail.internet.MimeMessage
 
 object EmailHelper {
 
-    fun sendWelcomeEmail(userEmail: String, userName: String) {
-        // 🚨 IMPORTANT: You MUST use a real Gmail App Password (16 digits)
-        // 1. Enable 2FA on your Google Account.
-        // 2. Search for "App Passwords" in Google Account settings.
-        // 3. Select "Other" and name it "AndroidBusApp".
-        val senderEmail = "bwwmas@gmail.com" 
-        val appPassword = "gmym hgyb gkmm lbel"    
+    private const val SENDER_EMAIL = "bwwmas@gmail.com"
+    private const val APP_PASSWORD = "SFNDSASPSHLYPEHZ"
 
-        val props = Properties()
-        props["mail.smtp.auth"] = "true"
-        props["mail.smtp.starttls.enable"] = "true"
-        props["mail.smtp.host"] = "smtp.gmail.com"
-        props["mail.smtp.port"] = "587"
-        props["mail.smtp.ssl.protocols"] = "TLSv1.2"
-
-        val session = Session.getInstance(props, object : Authenticator() {
-            override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication(senderEmail, appPassword)
-            }
-        })
-
-        // Use a background thread for networking
+    // ─── Send OTP email ────────────────────────────────────────────────────
+    fun sendOTPEmail(context: Context, userEmail: String, userName: String, otpCode: String) {
         Thread {
             try {
-                Log.d("EMAIL", "Starting email send to $userEmail...")
-                val message = MimeMessage(session)
-                message.setFrom(InternetAddress(senderEmail, "Addis Bus Tracker"))
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmail))
-                message.setSubject("Welcome to Addis Bus Tracker 🚍")
-                
-                val htmlContent = """
-                    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-                        <div style="background: linear-gradient(135deg, #3F51B5, #2196F3); padding: 40px 20px; text-align: center; color: white;">
-                            <h1 style="margin: 0; font-size: 32px; letter-spacing: 1px;">Addis Bus Tracker</h1>
-                            <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">Your Smart Transit Companion</p>
-                        </div>
-                        <div style="padding: 40px; line-height: 1.8; color: #444; background: #ffffff;">
-                            <h2 style="color: #3F51B5; margin-top: 0;">Welcome, $userName!</h2>
-                            <p>We're thrilled to have you join <b>Addis Bus Tracker</b>. Your account is now active and ready for your next commute.</p>
-                            
-                            <div style="background: #f8f9fa; padding: 25px; border-left: 5px solid #3F51B5; border-radius: 8px; margin: 30px 0;">
-                                <h3 style="margin-top: 0; font-size: 18px; color: #333;">Next Steps:</h3>
-                                <ul style="margin: 0; padding-left: 20px;">
-                                    <li><b>Stay Updated:</b> Use the live map to see bus locations.</li>
-                                    <li><b>Plan Ahead:</b> Get accurate ETAs for your destination.</li>
-                                    <li><b>Safe Travel:</b> Join thousands of smart commuters in Addis.</li>
-                                </ul>
-                            </div>
-                            
-                            <p>If you didn't receive your verification link from Firebase, please check your Spam folder.</p>
-                            
-                            <p style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">Best regards,<br><b style="color: #3F51B5;">The Addis Transport Team</b></p>
-                        </div>
-                        <div style="background: #f1f1f1; padding: 20px; text-align: center; font-size: 13px; color: #777;">
-                            © 2026 Addis Bus Tracker System. <br>
-                            This is an automated message, please do not reply directly.
-                        </div>
-                    </div>
-                """.trimIndent()
+                Log.d("EMAIL", "=== SENDING OTP EMAIL ===")
+                Log.d("EMAIL", "To: $userEmail, Code: $otpCode")
 
-                message.setContent(htmlContent, "text/html; charset=utf-8")
+                val props = Properties()
+                props["mail.smtp.host"] = "smtp.gmail.com"
+                props["mail.smtp.port"] = "465"
+                props["mail.smtp.auth"] = "true"
+                props["mail.smtp.socketFactory.port"] = "465"
+                props["mail.smtp.socketFactory.class"] = "javax.net.ssl.SSLSocketFactory"
+                props["mail.smtp.socketFactory.fallback"] = "false"
+                props["mail.smtp.connectiontimeout"] = "30000"
+                props["mail.smtp.timeout"] = "30000"
+
+                val session = Session.getInstance(props, object : Authenticator() {
+                    override fun getPasswordAuthentication(): PasswordAuthentication {
+                        return PasswordAuthentication(SENDER_EMAIL, APP_PASSWORD)
+                    }
+                })
+
+                val message = MimeMessage(session)
+                message.setFrom(InternetAddress(SENDER_EMAIL, "Addis Bus Tracker"))
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmail))
+                message.subject = "Your Addis Bus Tracker Verification Code"
+                message.setContent(
+                    """
+                    <div style="font-family:Arial,sans-serif;max-width:500px;margin:auto;padding:30px;border:1px solid #ddd;border-radius:10px;">
+                        <h2 style="color:#3F51B5;text-align:center;">Addis Bus Tracker</h2>
+                        <p>Hello <b>$userName</b>,</p>
+                        <p>Your verification code is:</p>
+                        <div style="text-align:center;margin:20px 0;">
+                            <span style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#3F51B5;background:#f0f2f9;padding:10px 30px;border-radius:8px;border:2px dashed #3F51B5;">$otpCode</span>
+                        </div>
+                        <p style="color:#777;font-size:13px;">This code is valid for 15 minutes. Do not share it.</p>
+                        <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+                        <p style="color:#999;font-size:12px;text-align:center;">Addis Bus Tracker Team</p>
+                    </div>
+                    """.trimIndent(),
+                    "text/html; charset=utf-8"
+                )
 
                 Transport.send(message)
-                Log.d("EMAIL", "✅ SUCCESS: HTML Welcome email sent to $userEmail")
+                Log.d("EMAIL", "=== OTP EMAIL SENT SUCCESSFULLY ===")
+
+                (context as? Activity)?.runOnUiThread {
+                    Toast.makeText(context, "✅ Code sent to $userEmail!", Toast.LENGTH_LONG).show()
+                }
             } catch (e: Exception) {
-                Log.e("EMAIL", "❌ ERROR: Failed to send email: ${e.message}")
-                e.printStackTrace()
+                Log.e("EMAIL", "=== OTP EMAIL FAILED: ${e.message} ===", e)
+                (context as? Activity)?.runOnUiThread {
+                    Toast.makeText(context, "❌ Email failed: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }.start()
+    }
+
+    // ─── Send Welcome email ────────────────────────────────────────────────
+    fun sendWelcomeEmail(context: Context, userEmail: String, userName: String) {
+        Thread {
+            try {
+                val props = Properties()
+                props["mail.smtp.host"] = "smtp.gmail.com"
+                props["mail.smtp.port"] = "465"
+                props["mail.smtp.auth"] = "true"
+                props["mail.smtp.socketFactory.port"] = "465"
+                props["mail.smtp.socketFactory.class"] = "javax.net.ssl.SSLSocketFactory"
+                props["mail.smtp.socketFactory.fallback"] = "false"
+
+                val session = Session.getInstance(props, object : Authenticator() {
+                    override fun getPasswordAuthentication(): PasswordAuthentication {
+                        return PasswordAuthentication(SENDER_EMAIL, APP_PASSWORD)
+                    }
+                })
+
+                val message = MimeMessage(session)
+                message.setFrom(InternetAddress(SENDER_EMAIL, "Addis Bus Tracker"))
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmail))
+                message.subject = "Welcome to Addis Bus Tracker"
+                message.setContent(
+                    """
+                    <div style="font-family:Arial,sans-serif;max-width:500px;margin:auto;padding:30px;">
+                        <h2 style="color:#3F51B5;">Welcome, $userName!</h2>
+                        <p>Your account is ready. Start tracking your bus today!</p>
+                        <p style="color:#999;font-size:12px;">- Addis Bus Tracker Team</p>
+                    </div>
+                    """.trimIndent(),
+                    "text/html; charset=utf-8"
+                )
+
+                Transport.send(message)
+                Log.d("EMAIL", "✅ Welcome email sent to $userEmail")
+            } catch (e: Exception) {
+                Log.e("EMAIL", "❌ Welcome email failed: ${e.message}", e)
             }
         }.start()
     }
