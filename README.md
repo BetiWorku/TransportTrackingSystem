@@ -97,25 +97,38 @@ npm run dev
 ```
 *(Runs securely on localhost with hot-module reloading)*
 
-### Running the Android App
-1. Open the root folder (`TransportTrackingSystem`) in **Android Studio**.
-2. Ensure your `google-services.json` is placed in the `app/` directory.
-3. Click **Sync Project with Gradle Files**.
-4. Press **Run** (Shift+F10) on an emulator or physical device.
+### Build Instructions
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/BetiWorku/TransportTrackingSystem.git
+    ```
+2.  **Open in Android Studio**:
+    *   File > Open > Select `TransportTrackingSystem` folder.
+3.  **Configure Firebase**:
+    *   Place your `google-services.json` file in the `app/` directory.
+    *   Ensure Firestore and Authentication are enabled in your Firebase Console.
+4.  **Configure Maps API**:
+    *   Add your API Key in `AndroidManifest.xml` under:
+        ```xml
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR_KEY_HERE"/>
+        ```
+5.  **Sync Gradle**:
+    *   Click "Sync Project with Gradle Files" in the top bar.
+6.  **Run**:
+    *   Select your emulator or physical device and click the **Run** button.
 
----
+## 🎥 Application Demo Video
 
-## 📸 Visual Gallery
+<div align="center">
+  <video src="Transport App Demo.mp4" width="100%" style="max-width: 800px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" controls autoplay loop muted>
+    Your browser does not support the video tag.
+  </video>
+  <br/>
+  <p><i>Addis Transport Passenger App & Command Center in Action.</i></p>
+</div>
 
-### 🚶 User Application Flow
-| Welcome | Login | Live Map Tracking |
-| :---: | :---: | :---: |
-| <img src="Screenshots/User/2_App_Starts.jpg" width="200"/> | <img src="Screenshots/User/4_Login_Page.jpg" width="200"/> | <img src="Screenshots/User/13_Track_Live_Anbesa_Bus.jpg" width="200"/> |
-
-### 👨‍💼 Admin Command Center
-| Main Dashboard | Fleet Statistics | Route Configuration |
-| :---: | :---: | :---: |
-| <img src="Screenshots/Admin/3_Fleet_Main_Dashboard.jpg" width="250"/> | <img src="Screenshots/Admin/4_Fleet_Statics.jpg" width="250"/> | <img src="Screenshots/Admin/6_Manage_Terminal.jpg" width="250"/> |
+> [!TIP]
+> Place your screen recording in the project root directory and name it `Transport App Demo.mp4` to display your demo video live on GitHub.
 
 <hr/>
 
