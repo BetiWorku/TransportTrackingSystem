@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 ## ✨ Project Overview
 
 Addis Transport is a comprehensive, dual-platform ecosystem designed to revolutionize public commuting in Addis Ababa. It bridges the gap between daily commuters and transit authorities by providing accurate, real-time bus tracking and a powerful centralized management dashboard.
