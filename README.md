@@ -59,30 +59,58 @@ A robust command center built to handle thousands of live data points.
 
 ---
 
-## 📂 Project Structure & Deep Dive
+## 📂 Complete Project Folder Blueprint
 
-### The Android App (`app/src/main/`)
-```text
-app/src/main/
-├── java/.../transporttrackingsystem/
-│   ├── 📺 activities/  ➔ UI logic. Controls what happens when users interact with screens.
-│   ├── 🔌 adapters/    ➔ The bridge connecting raw Firestore data to visual lists (RecyclerViews).
-│   ├── 📦 models/      ➔ Data blueprints (e.g., shaping how a 'Bus' looks in code).
-│   ├── 🌐 network/     ➔ Secure API requests and Firebase listeners.
-│   ├── 🛠️ utils/       ➔ Reusable helpers (time formatting, distance calculation).
-│   └── 🧠 viewmodels/  ➔ State management. Keeps UI data safe during interruptions.
-└── res/                ➔ Visuals! XML layouts, icons, and Material Design themes.
-```
+Here is the exact, comprehensive file-level folder blueprint of both the **Android Passenger App** and the **React Admin Panel**:
 
-### The React Dashboard (`admin-dashboard-web/src/`)
 ```text
-admin-dashboard-web/src/
-├── 🖼️ assets/          ➔ Static files (Logos, premium fonts).
-├── 🧩 components/      ➔ Reusable UI blocks (Sidebars, metric cards, map overlays).
-├── 🌍 context/         ➔ Global state managers (User sessions).
-├── 🪝 hooks/           ➔ Custom logic (e.g., checking if an Admin is logged in).
-├── 📄 pages/           ➔ Full-screen dashboard views (Fleet Manager, Complaints).
-└── 🔧 utils/           ➔ Math and sorting algorithms for large data tables.
+TransportTrackingSystem/
+├── 📱 app/ (Native Android Passenger App)
+│   ├── src/main/java/com/example/transporttrackingsystem/
+│   │   ├── 📺 activities/ (Screen UI Controllers)
+│   │   │   ├── 🎬 SplashActivity.kt (Initial splash loader)
+│   │   │   ├── 🚪 WelcomeActivity.kt (Onboarding flow entry)
+│   │   │   ├── 🔑 LoginActivity.kt (Secure passenger login)
+│   │   │   ├── 📝 RegisterActivity.kt (Passenger registration form)
+│   │   │   ├── 📧 OtpVerificationActivity.kt (Secure 6-digit email OTP checking)
+│   │   │   ├── 🏛️ MainActivity.kt (Passenger home navigation & terminal lists)
+│   │   │   ├── 📍 BusTrackerActivity.kt (Real-time Google Maps bus tracking screen)
+│   │   │   ├── ℹ️ BusDetailsActivity.kt (Trip metrics, occupancy & speed statistics)
+│   │   │   ├── 💬 ComplaintActivity.kt (User ticket/feedback submission)
+│   │   │   ├── 📰 UserNewsActivity.kt (Broadcasting announcements list)
+│   │   │   ├── ⚙️ SettingsActivity.kt (Commuter profile management)
+│   │   │   ├── 👤 UserDashboardActivity.kt (Ticket and session analytics)
+│   │   │   ├── 🔒 ForgotPasswordActivity.kt (SMTP-based credential recovery request)
+│   │   │   └── ✏️ ResetPasswordActivity.kt (Secure code confirmation and new pass entry)
+│   │   ├── 🔌 adapters/ (Data RecyclerView Bridges)
+│   │   │   ├── 🚍 BusAdapter.kt (Lists active buses and ETA details)
+│   │   │   └── 🤝 SharedAdapters.kt (Reusable components for News & Complaints)
+│   │   ├── 📦 models/ (Data blueprint structures)
+│   │   │   └── 📐 Models.kt (Firebase structures: User, Bus, Route, News, Complaint)
+│   │   └── 🔧 utils/ (Asynchronous helpers)
+│   │       ├── 📨 EmailHelper.kt (SMTP client wrapper for secure SSL mailings)
+│   │       └── 🔔 NotificationActionReceiver.kt (Dynamic system notifications trigger)
+│   └── src/main/res/ (Material Design Assets & XML layouts)
+│       ├── drawable/ (App icons and button vector assets)
+│       ├── layout/ (XML layouts for all screens)
+│       └── values/ (Color tokens, premium typography & strings configurations)
+│
+├── 💻 admin-dashboard-web/ (React Command Center Web Panel)
+│   ├── src/
+│   │   ├── 📺 main.jsx (React bootstrap initializer)
+│   │   ├── 🚪 App.jsx (Routes manager & real-time background sync)
+│   │   ├── 🤝 firebase.js (Web Firestore configuration)
+│   │   ├── 🎨 index.css (Tailwind components & custom glassmorphism)
+│   │   ├── 🧩 components/ (Web Widgets & Panels)
+│   │   │   ├── 🔒 AdminLogin.jsx (Security check and authorization gateway)
+│   │   │   └── 🎛️ DashboardComponents.jsx (Interactive panels for fleet, complaints & news)
+│   │   └── 🖼️ assets/ (Branding SVG/PNG assets)
+│   ├── package.json (Web dependencies & scripts)
+│   └── vite.config.js (Vite compiler settings)
+│
+├── 🎥 Transport App Demo.mp4 (Live interactive demo video file at root)
+├── build.gradle.kts (Kotlin Gradle root compilation config)
+└── README.md (Comprehensive documentation hub)
 ```
 
 ---
