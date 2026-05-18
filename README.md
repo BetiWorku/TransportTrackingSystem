@@ -1,20 +1,10 @@
 
 
-https://github.com/user-attachments/assets/20018d8d-1fc8-40fc-b6e8-c327955cfc4a
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Addis_Transport-Tracking_System-2196F3?style=for-the-badge&logo=googlemaps&logoColor=white" alt="Logo"/>
-  <br/>
-  <h1>🚍 Addis Transport Tracking System</h1>
-  <p><strong>A Next-Generation Real-Time Urban Mobility & Fleet Management Solution for Addis Ababa.</strong></p>
-  
-  [![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?style=for-the-badge&logo=kotlin&logoColor=white)]()
-  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)]()
-  [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)]()
-  [![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)]()
-</div>
 
-<hr/>
+
+
+
 
 ## ✨ Project Overview
 
@@ -122,21 +112,4 @@ npm run dev
     *   Select your emulator or physical device and click the **Run** button.
 
 ## 🎥 Application Demo Video
-
-<div align="center">
-  <video src="Transport App Demo.mp4" width="100%" style="max-width: 800px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" controls autoplay loop muted>
-    Your browser does not support the video tag.
-  </video>
-  <br/>
-  <p><i>Addis Transport Passenger App & Command Center in Action.</i></p>
-</div>
-
-> [!TIP]
-> Place your screen recording in the project root directory and name it `Transport App Demo.mp4` to display your demo video live on GitHub.
-
-<hr/>
-
-<div align="center">
-  <b>Developed for Addis Ababa Transport Management.</b><br>
-  <i>Empowering commuters with data, one ride at a time.</i>
-</div>
+https://github.com/user-attachments/assets/20018d8d-1fc8-40fc-b6e8-c327955cfc4a
