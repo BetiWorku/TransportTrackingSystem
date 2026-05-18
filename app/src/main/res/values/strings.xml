@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Addis Transport</string>
     <string name="active_buses">Active Buses: %1$d</string>
-    <string name="trip_info">Trip: %1$.2f km \| Look for buses going to %2$s\n(Tap here to change route)</string>
+    <string name="trip_info">Trip: %1$.2f km | Look for buses going to %2$s\n(Tap here to change route)</string>
     <string name="traffic_delay">⚠️ Traffic Delay: Heavy congestion near %1$s. Expect +%2$d min delay.</string>
     <string name="location_coords">%1$.4f, %2$.4f</string>
     <string name="bus_arriving_soon">Bus Arriving Soon!</string>
@@ -30,4 +30,9 @@
     <string name="view_all_stops">View All (%1$d)</string>
     <string name="hide_stops">Hide Stops</string>
 
+    <string name="active_buses_fleet">Active Buses: %1$d Fleet</string>
+    <string name="buses_active_count">%1$d bus(es) active</string>
+    <string name="mins_label">%1$d mins</string>
+    <string name="arriving_status">Arriving...</string>
+    <string name="dist_to_next_with_total">%1$s to %2$s%3$s</string>
 </resources>

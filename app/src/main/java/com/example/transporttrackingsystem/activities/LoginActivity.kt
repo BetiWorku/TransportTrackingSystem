@@ -72,31 +72,13 @@ class LoginActivity : AppCompatActivity() {
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 
-                // 🔐 HARDCODED ADMIN BYPASS
-                if (email == "bwwmas@gmail.com" && password == "Yotorb123#") {
-                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // 🚀 GO TO WELCOME SCREEN
-                            val intent = Intent(this, WelcomeActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            val exception = task.exception
-                            val message = when (exception) {
-                                is com.google.firebase.FirebaseNetworkException -> "Connection lost. Please check your internet."
-                                is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "Email is incorrect. Please try again."
-                                is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "The email and password is incorrect. Please find the correct details and try again."
-                                else -> "Connection lost or email and password incorrect. Please find the correct details and try again."
-                            }
-
-                            AlertDialog.Builder(this)
-                                .setTitle("Login Failed")
-                                .setMessage(message)
-                                .setPositiveButton("Try Again", null)
-                                .show()
-                        }
-                    }
+                // 🛑 BLOCK ADMIN LOGIN ON MOBILE
+                if (email.lowercase() == "bwwmas@gmail.com") {
+                    AlertDialog.Builder(this)
+                        .setTitle("Access Denied")
+                        .setMessage("Admin accounts can only log in via the Web Dashboard. Please use a passenger account for the mobile app.")
+                        .setPositiveButton("OK", null)
+                        .show()
                     return@setOnClickListener
                 }
 
@@ -105,35 +87,50 @@ class LoginActivity : AppCompatActivity() {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val user = auth.currentUser
+                            val userId = user?.uid ?: ""
                             val userEmail = user?.email?.lowercase() ?: ""
                             
-                            if (user?.isEmailVerified == true || userEmail == "bwwmas@gmail.com") {
-                                // GO TO WELCOME SCREEN
-                                startActivity(Intent(this, WelcomeActivity::class.java))
-                                finish()
-                            } else {
-                                // 🛑 Block access until verified
-                                AlertDialog.Builder(this)
-                                    .setTitle("Verification Required")
-                                    .setMessage("Your email is not verified yet. Verification email sent. Please check your inbox or spam folder.")
-                                    .setPositiveButton("I Verified It") { _, _ -> 
-                                        // Refresh user and try again
-                                        user?.reload()?.addOnCompleteListener { 
-                                            btnLogin.performClick() // Trigger login check again
+                            // Check verification status in Firestore
+                            db.collection("users").document(userId).get()
+                                .addOnSuccessListener { document ->
+                                    if (document != null && document.exists()) {
+                                        val isVerified = document.getBoolean("isVerified") ?: false
+                                        val name = document.getString("name") ?: ""
+                                        
+                                        if (isVerified || userEmail == "bwwmas@gmail.com") {
+                                            // GO TO WELCOME SCREEN
+                                            startActivity(Intent(this, WelcomeActivity::class.java))
+                                            finish()
+                                        } else {
+                                            // 🛑 Block access until verified by OTP
+                                            AlertDialog.Builder(this@LoginActivity)
+                                                .setTitle("Verification Required")
+                                                .setMessage("Your account has not been verified yet. Please enter the 6-digit code we sent to $userEmail to verify your email and activate your account.")
+                                                .setCancelable(false)
+                                                .setPositiveButton("Verify Now") { _, _ ->
+                                                    val intent = Intent(this@LoginActivity, OtpVerificationActivity::class.java).apply {
+                                                        putExtra("EXTRA_EMAIL", userEmail)
+                                                        putExtra("EXTRA_USER_ID", userId)
+                                                        putExtra("EXTRA_NAME", name)
+                                                    }
+                                                    startActivity(intent)
+                                                    finish()
+                                                }
+                                                .setNegativeButton("Dismiss") { _, _ ->
+                                                    auth.signOut()
+                                                }
+                                                .show()
                                         }
+                                    } else {
+                                        // No user doc found, sign out
+                                        Toast.makeText(this, "User profile not found. Please register again.", Toast.LENGTH_LONG).show()
+                                        auth.signOut()
                                     }
-                                    .setNegativeButton("Resend Link") { _, _ -> 
-                                        user?.sendEmailVerification()?.addOnCompleteListener { resendTask ->
-                                            if (resendTask.isSuccessful) {
-                                                Toast.makeText(this, "Verification link resent!", Toast.LENGTH_SHORT).show()
-                                            } else {
-                                                Toast.makeText(this, "Resend failed: ${resendTask.exception?.message}", Toast.LENGTH_LONG).show()
-                                            }
-                                        }
-                                    }
-                                    .setNeutralButton("Dismiss") { _, _ -> auth.signOut() }
-                                    .show()
-                            }
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(this, "Failed to check verification: ${e.message}", Toast.LENGTH_LONG).show()
+                                    auth.signOut()
+                                }
                         } else {
                             val exception = task.exception
                             val message = when (exception) {

@@ -95,6 +95,22 @@ class ComplaintActivity : AppCompatActivity() {
             }
         }
 
+        val btnClearAll = findViewById<TextView>(R.id.btnClearAllComplaints)
+        btnClearAll.setOnClickListener {
+            if (allComplaintsList.isNotEmpty()) {
+                AlertDialog.Builder(this)
+                    .setTitle("Clear All Reports")
+                    .setMessage("Are you sure you want to delete all your submitted reports? This cannot be undone.")
+                    .setPositiveButton("Delete All") { _, _ ->
+                        clearAllReports()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            } else {
+                Toast.makeText(this, "No reports to clear.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         auth.addAuthStateListener { firebaseAuth ->
             if (firebaseAuth.currentUser != null) {
                 fetchUserComplaints()
@@ -249,6 +265,25 @@ class ComplaintActivity : AppCompatActivity() {
         if (changed) {
             prefs.edit().putStringSet("read_ids", readIds).apply()
             Log.d("ComplaintActivity", "All new replies marked as read locally")
+        }
+    }
+
+    private fun clearAllReports() {
+        val user = auth.currentUser ?: return
+        val batch = db.batch()
+        
+        // Use allComplaintsList to get current user's local references
+        if (allComplaintsList.isEmpty()) return
+
+        for (complaint in allComplaintsList) {
+            val docRef = db.collection("complaints").document(complaint.id)
+            batch.delete(docRef)
+        }
+
+        batch.commit().addOnSuccessListener {
+            Toast.makeText(this, "All reports cleared successfully!", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Failed to clear reports: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -48,11 +48,16 @@ class BusAdapter(
 
     override fun onBindViewHolder(holder: BusViewHolder, position: Int) {
         val bus = buses[position]
-        holder.busName.text = bus.id
+        
+        // 🚌 Combined Name: Shows Type and ID (e.g. "Anbessa - Wolo-25-01")
+        val fullTitle = if (bus.id.contains(bus.type)) bus.id else "${bus.type} - ${bus.id.replace("⭐ BEST: ", "")}"
+        holder.busName.text = if (bus.id.startsWith("⭐ BEST")) "⭐ BEST: $fullTitle" else fullTitle
+        
         holder.busDestination.text = "To: ${bus.destination}"
         holder.busDistance.text = if (bus.totalDist.isNotEmpty()) "${bus.distance} (${bus.totalDist} to Dest)" else bus.distance
         holder.busEta.text = if (bus.totalEta.isNotEmpty()) "${bus.eta}\nTotal: ${bus.totalEta}" else bus.eta
         holder.busType.text = bus.type
+        holder.busType.visibility = View.GONE // Hide original type pill as it's now in the title
         holder.busPassengers.text = "${bus.passengers}/${bus.capacity}"
         holder.tvCurrentStop.text = "At: ${bus.currentStop}"
         holder.tvNextStop.text = "Next: ${bus.nextStop}"

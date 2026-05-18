@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -35,6 +36,7 @@ class SettingsActivity : AppCompatActivity() {
         btnBackArrow.setOnClickListener { finish() }
 
         val etUpdateName = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etUpdateName)
+        val etOldPassword = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etOldPassword)
         val etUpdatePassword = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etUpdatePassword)
         val btnUpdateProfile = findViewById<Button>(R.id.btnUpdateProfile)
         val switchNotifications = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.switchNotifications)
@@ -74,17 +76,31 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             if (newPassword.isNotEmpty()) {
+                val oldPassword = etOldPassword.text.toString().trim()
+                if (oldPassword.isEmpty()) {
+                    Toast.makeText(this, "Please enter your current password to change it.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                
                 if (newPassword.length >= 6) {
-                    currentUser?.updatePassword(newPassword)?.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show()
-                            etUpdatePassword.text?.clear()
+                    val credential = EmailAuthProvider.getCredential(currentUser?.email!!, oldPassword)
+                    currentUser.reauthenticate(credential).addOnCompleteListener { reAuthTask ->
+                        if (reAuthTask.isSuccessful) {
+                            currentUser.updatePassword(newPassword).addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show()
+                                    etOldPassword.text?.clear()
+                                    etUpdatePassword.text?.clear()
+                                } else {
+                                    Toast.makeText(this, "Password update failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                                }
+                            }
                         } else {
-                            Toast.makeText(this, "Password update failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, "Authentication failed. Incorrect current password.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 } else {
-                    Toast.makeText(this, "Password must be at least 6 characters.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "New password must be at least 6 characters.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import android.os.Build
+import android.app.Activity
 
 class SplashActivity : AppCompatActivity() {
 
@@ -56,7 +58,12 @@ class SplashActivity : AppCompatActivity() {
                     // Always go to Login (Splash → Login → Dashboard flow)
                     val next = Intent(this, LoginActivity::class.java)
                     startActivity(next)
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, android.R.anim.fade_in, android.R.anim.fade_out)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    }
                     finish()
                 }, 1200)
             }

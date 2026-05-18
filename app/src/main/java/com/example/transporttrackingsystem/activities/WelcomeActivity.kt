@@ -29,7 +29,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            // 🔍 Fetch user name from Firestore
+            // 🔍 Fetch user's actual name from Firestore
             db.collection("users").document(currentUser.uid).get()
                 .addOnSuccessListener { document ->
                     val nameFromFirestore = document.getString("name")
@@ -38,28 +38,20 @@ class WelcomeActivity : AppCompatActivity() {
                     val finalName = when {
                         !nameFromFirestore.isNullOrEmpty() -> nameFromFirestore
                         !nameFromAuth.isNullOrEmpty() -> nameFromAuth
-                        else -> "User" // Last resort if both are missing
+                        else -> "Passenger" // Fallback if name is missing
                     }
                     
                     tvUserName.text = "Welcome, $finalName!"
                 }
                 .addOnFailureListener {
-                    val nameFromAuth = currentUser.displayName
-                    if (!nameFromAuth.isNullOrEmpty()) {
-                        tvUserName.text = "Welcome, $nameFromAuth!"
-                    } else {
-                        tvUserName.text = "Welcome, User!"
-                    }
+                    tvUserName.text = "Welcome!"
                 }
+        } else {
+            tvUserName.text = "Welcome!"
         }
 
         btnGetStarted.setOnClickListener {
-            val userEmail = currentUser?.email?.lowercase() ?: ""
-            if (userEmail == "bwwmas@gmail.com") {
-                startActivity(Intent(this, BusRegistrationActivity::class.java))
-            } else {
-                startActivity(Intent(this, MainActivity::class.java))
-            }
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
 

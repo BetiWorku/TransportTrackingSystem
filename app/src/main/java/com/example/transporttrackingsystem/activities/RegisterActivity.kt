@@ -34,71 +34,83 @@ class RegisterActivity : AppCompatActivity() {
         val tvLogin = findViewById<TextView>(R.id.tvLogin)
 
         btnRegister.setOnClickListener {
-            val name = etName.text.toString()
-            val email = etEmail.text.toString()
-            val password = etPassword.text.toString()
+            val name = etName.text.toString().trim()
+            val email = etEmail.text.toString().trim()
+            val password = etPassword.text.toString().trim()
 
-            if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                AlertDialog.Builder(this)
+                    .setTitle("Registration Failed")
+                    .setMessage("Please fill in all fields.")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@setOnClickListener
+            }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                AlertDialog.Builder(this)
+                    .setTitle("Invalid Email")
+                    .setMessage("Please enter a valid email address.")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@setOnClickListener
+            }
+
+            if (password.length < 6) {
+                AlertDialog.Builder(this)
+                    .setTitle("Weak Password")
+                    .setMessage("Password must be at least 6 characters long.")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@setOnClickListener
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
                             val userId = auth.currentUser?.uid
                             if (userId != null) {
                                 // 💾 Save User to Firestore
                                 val userRole = if (email.lowercase() == "bwwmas@gmail.com") "Admin" else "Commuter"
+                                val otpCode = if (userRole == "Admin") "" else (100000 + java.util.Random().nextInt(900000)).toString()
+                                val isVerified = userRole == "Admin" // Admin bypasses verification
+                                
                                 val user = hashMapOf(
                                     "name" to name,
                                     "email" to email,
-                                    "role" to userRole
+                                    "role" to userRole,
+                                    "isVerified" to isVerified,
+                                    "otp" to otpCode
                                 )
                                 db.collection("users").document(userId).set(user)
                                     .addOnSuccessListener {
-                                        // 📧 1. Send our custom HTML Welcome Email (Async)
-                                        Log.d("REGISTER", "Attempting to send welcome email to $email")
-                                        EmailHelper.sendWelcomeEmail(email, name)
-                                        
                                         // ✅ Check if Admin to bypass verification and auto-login
-                                        if (email.lowercase() == "bwwmas@gmail.com") {
+                                        if (userRole == "Admin") {
                                             Log.d("REGISTER", "Admin detected: Bypassing verification.")
                                             Toast.makeText(this, "Admin Registered! Welcome Betelhem.", Toast.LENGTH_LONG).show()
+                                            
+                                            // Send Welcome Email
+                                            EmailHelper.sendWelcomeEmail(this@RegisterActivity, email, name)
                                             
                                             val intent = Intent(this, WelcomeActivity::class.java)
                                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                             startActivity(intent)
                                             finish()
                                         } else {
-                                            // ✅ 2. Send Firebase Verification Link for normal users
-                                            Log.d("REGISTER", "Requesting Firebase verification email for $email")
-                                            auth.currentUser?.sendEmailVerification()
-                                                ?.addOnCompleteListener { verifyTask ->
-                                                    if (verifyTask.isSuccessful) {
-                                                        Log.d("REGISTER", "Firebase verification email sent successfully.")
-                                                        
-                                                        // 📢 Show a clear Alert instead of a Toast
-                                                        AlertDialog.Builder(this@RegisterActivity)
-                                                            .setTitle("Verification Required")
-                                                            .setMessage("Verification email sent. Please check your inbox or spam folder.")
-                                                            .setCancelable(false)
-                                                            .setPositiveButton("Got It") { _, _ ->
-                                                                // 🚪 Sign out and Move to Login only after they click OK
-                                                                auth.signOut()
-                                                                val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                                                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                                                startActivity(intent)
-                                                                finish()
-                                                            }
-                                                            .show()
-                                                    } else {
-                                                        val error = verifyTask.exception?.message ?: "Unknown error"
-                                                        Log.e("REGISTER", "Firebase verification failed: $error")
-                                                        Toast.makeText(this@RegisterActivity, "Registration successful, but verification email failed: $error", Toast.LENGTH_LONG).show()
-                                                        
-                                                        // Move anyway but let them know it failed
-                                                        auth.signOut()
-                                                        startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
-                                                        finish()
-                                                    }
-                                                }
+                                            Log.d("REGISTER", "Commuter registered. Navigating to OTP page for $email")
+
+                                            // ✅ Navigate to OTP page IMMEDIATELY
+                                            val intent = Intent(this@RegisterActivity, OtpVerificationActivity::class.java).apply {
+                                                putExtra("EXTRA_EMAIL", email)
+                                                putExtra("EXTRA_USER_ID", userId)
+                                                putExtra("EXTRA_NAME", name)
+                                            }
+                                            startActivity(intent)
+                                            finish()
+
+                                            // 📧 Send OTP Email in background AFTER navigation
+                                            EmailHelper.sendOTPEmail(this@RegisterActivity, email, name, otpCode)
+                                            EmailHelper.sendWelcomeEmail(this@RegisterActivity, email, name)
                                         }
                                     }
                                     .addOnFailureListener { e ->
@@ -117,9 +129,6 @@ class RegisterActivity : AppCompatActivity() {
                             Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
                         }
                     }
-            } else {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
-            }
         }
 
         tvLogin.setOnClickListener {
