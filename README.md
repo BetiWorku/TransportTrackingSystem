@@ -76,7 +76,7 @@ TransportTrackingSystem/
 ## 🎥 Application Demo Video
 
 <div align="center">
-  <video src="Screenshots/Transport App Demo.mp4" width="100%" style="max-width: 800px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" controls autoplay loop muted>
+  <video src="Transport App Demo.mp4" width="100%" style="max-width: 800px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" controls autoplay loop muted>
     Your browser does not support the video tag.
   </video>
   <br/>
@@ -84,7 +84,7 @@ TransportTrackingSystem/
 </div>
 
 > [!TIP]
-> Place your screen recording inside the `Screenshots/` directory and name it `Transport App Demo.mp4` to display your demo video live on GitHub.
+> Place your screen recording in the project root directory and name it `Transport App Demo.mp4` to display your demo video live on GitHub.
 
 ---
 *Developed for Addis Ababa Transport Management.*
