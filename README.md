@@ -73,19 +73,18 @@ TransportTrackingSystem/
 6.  **Run**:
     *   Select your emulator or physical device and click the **Run** button.
 
-## 📸 Screenshots
+## 🎥 Application Demo Video
 
-### User Application Flow
-| Splash & Welcome | Registration & Login | Map & Tracking |
-| :---: | :---: | :---: |
-| ![Splash](Screenshots/User/2_App_Starts.jpg) | ![Register](Screenshots/User/3_Register_User.jpg) | ![Search](Screenshots/User/8_Search.jpg) |
-| ![Welcome](Screenshots/User/7_Welcome_User.jpg) | ![Login](Screenshots/User/4_Login_Page.jpg) | ![Live Track](Screenshots/User/13_Track_Live_Anbesa_Bus.jpg) |
+<div align="center">
+  <video src="Screenshots/Transport App Demo.mp4" width="100%" style="max-width: 800px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" controls autoplay loop muted>
+    Your browser does not support the video tag.
+  </video>
+  <br/>
+  <p><i>Addis Transport Passenger App & Command Center in Action.</i></p>
+</div>
 
-### Admin Management Flow
-| Dashboard | Fleet Stats | Terminals & Routes |
-| :---: | :---: | :---: |
-| ![Admin Dash](Screenshots/Admin/3_Fleet_Main_Dashboard.jpg) | ![Fleet Stats](Screenshots/Admin/4_Fleet_Statics.jpg) | ![Terminals](Screenshots/Admin/6_Manage_Terminal.jpg) |
-| ![Register Bus](Screenshots/Admin/8_Register_Bus.jpg) | ![Settings](Screenshots/Admin/9_Setting.jpg) | ![News](Screenshots/Admin/10_News.jpg) |
+> [!TIP]
+> Place your screen recording inside the `Screenshots/` directory and name it `Transport App Demo.mp4` to display your demo video live on GitHub.
 
 ---
 *Developed for Addis Ababa Transport Management.*
