@@ -115,12 +115,19 @@ class BusTrackerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (MainActivity.isMockTestActive) {
-            if (busId.contains("Sheger", true)) {
-                distanceToStationKm = MainActivity.mockShegerDist
-                etaSecs = MainActivity.mockShegerSecs
-            } else {
-                distanceToStationKm = MainActivity.mockDist
-                etaSecs = MainActivity.mockSecs
+            when {
+                busId.contains("Sheger", true) -> {
+                    distanceToStationKm = MainActivity.mockShegerDist
+                    etaSecs = MainActivity.mockShegerSecs
+                }
+                busId.contains("Wolo-25-01", true) -> {
+                    distanceToStationKm = MainActivity.mockWoloDist
+                    etaSecs = MainActivity.mockWoloSecs
+                }
+                else -> {
+                    distanceToStationKm = MainActivity.mockDist
+                    etaSecs = MainActivity.mockSecs
+                }
             }
             totalDistKm = distanceToStationKm + 2.5
             totalEtaSecs = etaSecs + 450
@@ -252,12 +259,19 @@ class BusTrackerActivity : AppCompatActivity() {
 
                 // 🧪 MOCK OVERRIDE for Tracker Activity
                 if (MainActivity.isMockTestActive) {
-                    if (busId.contains("Sheger", true)) {
-                        distToFrom = MainActivity.mockShegerDist
-                        rawSecs = MainActivity.mockShegerSecs
-                    } else {
-                        distToFrom = MainActivity.mockDist
-                        rawSecs = MainActivity.mockSecs
+                    when {
+                        busId.contains("Sheger", true) -> {
+                            distToFrom = MainActivity.mockShegerDist
+                            rawSecs = MainActivity.mockShegerSecs
+                        }
+                        busId.contains("Wolo-25-01", true) -> {
+                            distToFrom = MainActivity.mockWoloDist
+                            rawSecs = MainActivity.mockWoloSecs
+                        }
+                        else -> {
+                            distToFrom = MainActivity.mockDist
+                            rawSecs = MainActivity.mockSecs
+                        }
                     }
                 }
 
@@ -346,12 +360,19 @@ class BusTrackerActivity : AppCompatActivity() {
         }
         
         if (MainActivity.isMockTestActive) {
-            if (busId.contains("Sheger", true)) {
-                MainActivity.mockShegerSecs = etaSecs
-                MainActivity.mockShegerDist = distanceToStationKm
-            } else {
-                MainActivity.mockSecs = etaSecs
-                MainActivity.mockDist = distanceToStationKm
+            when {
+                busId.contains("Sheger", true) -> {
+                    MainActivity.mockShegerSecs = etaSecs
+                    MainActivity.mockShegerDist = distanceToStationKm
+                }
+                busId.contains("Wolo-25-01", true) -> {
+                    MainActivity.mockWoloSecs = etaSecs
+                    MainActivity.mockWoloDist = distanceToStationKm
+                }
+                else -> {
+                    MainActivity.mockSecs = etaSecs
+                    MainActivity.mockDist = distanceToStationKm
+                }
             }
         }
 
