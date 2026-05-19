@@ -2,12 +2,34 @@ package com.example.transporttrackingsystem.models
 
 import com.google.firebase.Timestamp
 
+/**
+ * User — Represents the profile and authorization state of a registered passenger or administrator.
+ * Synced with Firestore collection: "users"
+ */
+data class User(
+    val uid: String = "",
+    val name: String = "",
+    val email: String = "",
+    val role: String = "Commuter", // Admin, Commuter
+    val isVerified: Boolean = false,
+    val otp: String = "",
+    val createdAt: Timestamp = Timestamp.now()
+)
+
+/**
+ * Route — Represents a defined bus transit line in Addis Ababa.
+ * Synced with Firestore collection: "routes"
+ */
 data class Route(
     val routeId: String = "",
     val routeName: String = "",
     val busNumber: String = ""
 )
 
+/**
+ * Stop — Represents an individual geolocated boarding/drop-off station along a route.
+ * Synced with Firestore collection: "stops"
+ */
 data class Stop(
     val stopId: String = "",
     val stopName: String = "",
@@ -17,6 +39,10 @@ data class Stop(
     val stopOrder: Int = 0
 )
 
+/**
+ * Trip — Records an individual passenger's commute session from an entry terminal to their destination.
+ * Synced with Firestore collection: "trips"
+ */
 data class Trip(
     val tripId: String = "",
     val userId: String = "",
@@ -27,6 +53,10 @@ data class Trip(
     val timestamp: Timestamp = Timestamp.now()
 )
 
+/**
+ * Bus — Renders all core active properties and real-time geolocations of transit vehicles.
+ * Synced with Firestore collection: "buses"
+ */
 data class Bus(
     val busId: String = "",
     val busNumber: String = "",
@@ -47,6 +77,10 @@ data class Bus(
     val createdAt: Timestamp? = null
 )
 
+/**
+ * News — Defines general broadcast notifications and route delay alerts.
+ * Synced with Firestore collection: "news"
+ */
 data class News(
     val newsId: String = "",
     val title: String = "",
@@ -55,6 +89,10 @@ data class News(
     val timestamp: Timestamp = Timestamp.now()
 )
 
+/**
+ * Complaint — Allows passengers to submit complaints/feedback directly to administrators.
+ * Synced with Firestore collection: "complaints"
+ */
 data class Complaint(
     val id: String = "",
     val userId: String = "",
@@ -65,3 +103,4 @@ data class Complaint(
     val adminReply: String = "",
     val timestamp: Timestamp = Timestamp.now()
 )
+

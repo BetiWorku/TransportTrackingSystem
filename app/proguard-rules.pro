@@ -1,21 +1,29 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# --- TRANSPORT TRACKING SYSTEM PRODUCTION PROGUARD CONFIGURATION ---
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# 1. Keep original stack trace details and source file attributes for accurate crash reports (e.g. Firebase Crashlytics)
+-keepattributes SourceFile,LineNumberTable,Signature,InnerClasses,EnclosingMethod,*Annotation*
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# 2. Prevent obfuscation of all Firebase and Google Play Services classes
+-keep class com.google.firebase.** { *; }
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.firebase.**
+-dontwarn com.google.android.gms.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# 3. Preserve critical model classes to ensure Firestore deserialization works perfectly via reflection
+-keep class com.example.transporttrackingsystem.models.** { *; }
+-keepclassmembers class com.example.transporttrackingsystem.models.** {
+    public <fields>;
+    public <methods>;
+    public <init>(...);
+}
+
+# 4. Preserve JavaMail (com.sun.mail) packages used for secure OTP email pipelines
+-keep class javax.mail.** { *; }
+-keep class com.sun.mail.** { *; }
+-dontwarn javax.mail.**
+-dontwarn com.sun.mail.**
+-dontwarn java.awt.**
+
+# 5. Optimize Kotlin metadata and coroutines handling
+-keep class kotlin.Metadata { *; }
+-dontwarn kotlin.jvm.internal.**
