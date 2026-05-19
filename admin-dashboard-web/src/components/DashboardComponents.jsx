@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const DefaultIcon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 import {
   Bus as BusIcon,
   MessageSquare,
@@ -621,7 +635,63 @@ export const TerminalsManagement = ({ searchQuery = "" }) => {
 };
 
 // --- OTHERS ---
-export const LiveMap = () => <div className="p-8 text-left"><h1 className="text-2xl font-bold text-gray-800">Live Map</h1><p className="text-gray-500">Real-time bus tracking portal.</p></div>;
+export const LiveMap = () => {
+  const [buses, setBuses] = useState([]);
+  const [stops, setStops] = useState([]);
+
+  useEffect(() => {
+    const unsubBuses = onSnapshot(collection(db, "buses"), (snap) => {
+      setBuses(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    const unsubStops = onSnapshot(collection(db, "stops"), (snap) => {
+      setStops(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => { unsubBuses(); unsubStops(); };
+  }, []);
+
+  // Addis Ababa coordinates as center
+  const center = [9.03, 38.74];
+
+  return (
+    <div className="p-8 text-left h-full flex flex-col animate-in fade-in duration-500">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Live Map</h1>
+        <p className="text-gray-500">Real-time bus tracking portal.</p>
+      </div>
+      <div className="flex-1 min-h-[500px] w-full bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 relative z-0">
+        <MapContainer center={center} zoom={12} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          />
+          {buses.map(bus => {
+            if (!bus.latitude || !bus.longitude) return null;
+            return (
+              <Marker key={`bus-${bus.id}`} position={[parseFloat(bus.latitude), parseFloat(bus.longitude)]}>
+                <Popup>
+                  <div className="font-bold text-primary-600">{bus.busNumber || 'Bus'} ({bus.busId})</div>
+                  <div className="text-xs text-gray-500">Driver: {bus.driverName}</div>
+                  <div className="text-xs text-gray-500">Status: {bus.status}</div>
+                </Popup>
+              </Marker>
+            );
+          })}
+          {stops.map(stop => {
+            if (!stop.latitude || !stop.longitude) return null;
+            return (
+              <Marker key={`stop-${stop.id}`} position={[parseFloat(stop.latitude), parseFloat(stop.longitude)]}>
+                <Popup>
+                  <div className="font-bold text-purple-600">Stop: {stop.stopName}</div>
+                  <div className="text-xs text-gray-500">Route: {stop.routeId}</div>
+                </Popup>
+              </Marker>
+            );
+          })}
+        </MapContainer>
+      </div>
+    </div>
+  );
+};
 // --- COMPONENT: SETTINGS (Profile & App Configuration) ---
 export const SettingsPage = () => {
   const auth = getAuth();
