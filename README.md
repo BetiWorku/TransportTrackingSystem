@@ -104,4 +104,9 @@ npm run dev
     *   Select your emulator or physical device and click the **Run** button.
 
 ## 🎥 Application Demo Video
-https://github.com/user-attachments/assets/20018d8d-1fc8-40fc-b6e8-c327955cfc4a
+
+
+https://github.com/user-attachments/assets/3a9c76af-6f89-4b4d-8aad-1cb3d0c1947f
+
+
+
