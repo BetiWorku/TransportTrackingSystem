@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tiraanspoortii Addis</string>
+    <string name="forgot_password">Iccitii dagattee?</string>
+    <string name="reset_password_title">Iccitii Haaraa</string>
+    <string name="enter_email_hint">Imeelii kee galchi</string>
+    <string name="send">Ergi</string>
+    <string name="cancel">Dhiisi</string>
+    
+    <!-- Auth Flow Strings -->
+    <string name="login">Seeni</string>
+    <string name="email">Imeelii</string>
+    <string name="password">Iccitii</string>
+    <string name="forgot_password_prompt">Iccitii dagattee?</string>
+    <string name="no_account_register">Herrega hin qabduu? Galmoofmi</string>
+
+    <string name="reset_password_desc">Teessoo imeelii keetii galchi, liinkii iccitii kee ittiin geeddaramu siif ergina.</string>
+    <string name="email_address">Teessoo Imeelii</string>
+    <string name="send_reset_link">Liinkii Ergi</string>
+
+    <string name="join_network">Nu Waliin Makami</string>
+    <string name="register">Galmoofmi</string>
+    <string name="full_name">Maqaa Guutuu</string>
+    <string name="create_account">Herrega Uumi</string>
+    <string name="already_have_account_login">Herrega qabdaa? Seeni</string>
+
+    <string name="ready_for_trip">Imala keetiif qophii dha?</string>
+    <string name="welcome">Baga nagaan dhuftan!</string>
+    <string name="didnt_get_email_resend">Imeeliin hin qaqqabne? Irra deebi\'ii ergi</string>
+    <string name="get_started">Jalqabi</string>
+
+    <string name="system_analytics">Qaaccessa Sirnichaa</string>
+    <string name="real_time_operations">Hojiiwwan Yeroo Ammaa</string>
+    <string name="active_buses_label">Atobusoota Hojirra Jiran</string>
+    <string name="pending_issues">Dhimmoota Hin Xumuramne</string>
+    <string name="routes">Sararoota</string>
+
+    <string name="system_online">● Sirnichi Hojjataa Jira</string>
+    <string name="where_to">Garam?</string>
+    <string name="current_station">Buufata Ammaa</string>
+    <string name="destination">Bakka Geessu</string>
+    <string name="find_fast_route">Sarara Saffisaa Barbaadi</string>
+    <string name="nearby_buses">Atobusoota Dhihoo Jiran</string>
+    <string name="nav_dashboard">Daashboordii</string>
+    <string name="nav_live_tracking">Hordoffii Atobusii Kallattii</string>
+    <string name="nav_routes">Sararoota</string>
+    <string name="nav_traffic_news">Oduu Tiraafikaa</string>
+    <string name="nav_feedback">Yaada / Komii Ergi</string>
+    <string name="nav_notifications">Beeksisoota</string>
+    <string name="nav_settings">Qindaa\'ina</string>
+    <string name="nav_sign_out">Bahi</string>
+</resources>

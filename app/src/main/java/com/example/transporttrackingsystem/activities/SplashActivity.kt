@@ -2,11 +2,13 @@ package com.example.transporttrackingsystem.activities
 
 import com.example.transporttrackingsystem.R
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import android.os.Build
@@ -16,6 +18,15 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Apply saved Dark Mode preference before setting content view
+        val sharedPref = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        if (sharedPref.getBoolean("DarkMode", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+        
         setContentView(R.layout.activity_splash)
 
         val logo     = findViewById<ImageView>(R.id.splashLogo)

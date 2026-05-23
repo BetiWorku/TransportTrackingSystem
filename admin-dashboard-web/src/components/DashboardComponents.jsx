@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Bus as BusIcon,
@@ -620,8 +620,120 @@ export const TerminalsManagement = ({ searchQuery = "" }) => {
   );
 };
 
-// --- OTHERS ---
-export const LiveMap = () => <div className="p-8 text-left"><h1 className="text-2xl font-bold text-gray-800">Live Map</h1><p className="text-gray-500">Real-time bus tracking portal.</p></div>;
+// --- COMPONENT: LIVE MAP ---
+export const LiveMap = () => {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const markersLayerRef = useRef(null);
+  const [buses, setBuses] = useState([]);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  
+  // 1. Fetch Buses
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, "buses"), (snap) => {
+      setBuses(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return unsub;
+  }, []);
+
+  // 2. Load Leaflet via CDN
+  useEffect(() => {
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link');
+      link.id = 'leaflet-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+    
+    if (!window.L) {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = () => setMapLoaded(true);
+      document.head.appendChild(script);
+    } else {
+      setMapLoaded(true);
+    }
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // 3. Initialize Map and Update Markers
+  useEffect(() => {
+    if (!mapLoaded || !mapRef.current) return;
+    const L = window.L;
+
+    if (!mapInstanceRef.current) {
+      mapInstanceRef.current = L.map(mapRef.current).setView([9.005401, 38.763611], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstanceRef.current);
+      
+      markersLayerRef.current = L.layerGroup().addTo(mapInstanceRef.current);
+    }
+
+    // Clear old markers
+    if (markersLayerRef.current) {
+      markersLayerRef.current.clearLayers();
+    }
+
+    // Add new markers
+    const activeBuses = buses.filter(b => b.status === 'Active');
+    const customIcon = L.icon({
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32],
+    });
+
+    activeBuses.forEach((bus, index) => {
+      // If the bus has no GPS data in Firebase, we give it a dummy location near Addis Ababa just for testing.
+      const lat = bus.latitude ? parseFloat(bus.latitude) : (9.005401 + (index * 0.008));
+      const lng = bus.longitude ? parseFloat(bus.longitude) : (38.763611 + (index * 0.005));
+
+      const popupContent = `
+        <div style="font-family: sans-serif; min-width: 150px;">
+          <strong style="color: #2563eb; font-size: 14px;">Bus: ${bus.busNumber || 'Unknown'}</strong><br/>
+          <span style="color: #6b7280; font-size: 11px;">ID: ${bus.busId || bus.id}</span><br/>
+          <div style="margin-top: 8px; font-size: 12px;">
+            <strong style="color: #374151;">Route:</strong> ${bus.routeId || 'N/A'}<br/>
+            <strong style="color: #374151;">Driver:</strong> ${bus.driverName || 'N/A'}<br/>
+            <strong style="color: #374151;">Terminal:</strong> ${bus.terminal || 'N/A'}<br/>
+            <span style="color: #eab308; font-size: 10px;">${!bus.latitude ? '(Demo Location)' : ''}</span>
+          </div>
+        </div>
+      `;
+      L.marker([lat, lng], { icon: customIcon })
+        .bindPopup(popupContent)
+        .addTo(markersLayerRef.current);
+    });
+  }, [buses, mapLoaded]);
+
+  const activeCount = buses.filter(b => b.status === 'Active').length;
+
+  return (
+    <div className="p-4 lg:p-8 text-left h-full flex flex-col animate-in fade-in duration-500">
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">Live Map</h1>
+        <p className="text-gray-500">Real-time bus tracking portal. Showing {activeCount} active buses.</p>
+      </div>
+      
+      <div className="flex-1 min-h-[500px] w-full rounded-2xl overflow-hidden border border-gray-200 shadow-xl relative z-0">
+        {!mapLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+            <p className="text-gray-500 font-bold animate-pulse">Loading Map...</p>
+          </div>
+        )}
+        <div ref={mapRef} style={{ height: '100%', width: '100%', minHeight: '500px' }} />
+      </div>
+    </div>
+  );
+};
 // --- COMPONENT: SETTINGS (Profile & App Configuration) ---
 export const SettingsPage = () => {
   const auth = getAuth();

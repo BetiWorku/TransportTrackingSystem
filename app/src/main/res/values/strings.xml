@@ -35,4 +35,49 @@
     <string name="mins_label">%1$d mins</string>
     <string name="arriving_status">Arriving...</string>
     <string name="dist_to_next_with_total">%1$s to %2$s%3$s</string>
+
+    <!-- Auth Flow Strings -->
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot_password_prompt">Forgot Password?</string>
+    <string name="no_account_register">Don\'t have an account? Register</string>
+
+    <string name="reset_password_desc">Enter your email address and we\'ll send you a link to reset your password.</string>
+    <string name="email_address">Email Address</string>
+    <string name="send_reset_link">Send Reset Link</string>
+
+    <string name="join_network">Join the Network</string>
+    <string name="register">Register</string>
+    <string name="full_name">Full Name</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_have_account_login">Already have an account? Login</string>
+
+    <!-- Welcome & Dashboard Strings -->
+    <string name="ready_for_trip">Ready for your trip?</string>
+    <string name="welcome">Welcome!</string>
+    <string name="didnt_get_email_resend">Didn\'t get an email? Resend</string>
+    <string name="get_started">Get Started</string>
+
+    <string name="system_analytics">System Analytics</string>
+    <string name="real_time_operations">Real-Time Operations</string>
+    <string name="active_buses_label">Active Buses</string>
+    <string name="pending_issues">Pending Issues</string>
+    <string name="routes">Routes</string>
+
+    <!-- MainActivity & Navigation -->
+    <string name="system_online">● System Online</string>
+    <string name="where_to">Where to?</string>
+    <string name="current_station">Current Station</string>
+    <string name="destination">Destination</string>
+    <string name="find_fast_route">Find Fast Route</string>
+    <string name="nearby_buses">Nearby Buses</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_live_tracking">Live Bus Tracking</string>
+    <string name="nav_routes">Routes</string>
+    <string name="nav_traffic_news">Traffic News</string>
+    <string name="nav_feedback">Send Feedback / Complaint</string>
+    <string name="nav_notifications">Notifications</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_sign_out">Sign Out</string>
 </resources>

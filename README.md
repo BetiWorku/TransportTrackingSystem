@@ -8,100 +8,113 @@
   [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)]()
   [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)]()
   [![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)]()
+  [![K6](https://img.shields.io/badge/K6-Load_Testing-7D64FF?style=for-the-badge&logo=k6&logoColor=white)]()
 </div>
 
 <hr/>
 
-## ✨ Project Overview
+## 🎯 Problem & Solution
 
-Addis Transport is a comprehensive, dual-platform ecosystem designed to revolutionize public commuting in Addis Ababa. It bridges the gap between daily commuters and transit authorities by providing accurate, real-time bus tracking and a powerful centralized management dashboard.
+**The Problem:** Commuters in Addis Ababa often face unpredictable bus schedules, long wait times, and a lack of real-time transit information. Furthermore, public transport administrators lack a unified system to track fleet movements, manage delays, and communicate with users dynamically.
 
-<div align="center">
-  
-| 📱 Passenger App (Android/Kotlin) | 💻 Admin Dashboard (React.js) |
-| :--- | :--- |
-| **Live Map Tracking:** Watch buses move in real-time. | **Enterprise Fleet Control:** Add, update, or remove buses. |
-| **Smart Trip Planner:** Find the fastest routes to destinations. | **Terminal Config:** Geolocation-based route ordering. |
-| **Instant ETA:** Get accurate arrival times based on speed. | **Command Center:** Monitor driver info & live capacity. |
-| **Alerts & News:** Receive push notifications for delays. | **Broadcast Hub:** Send system-wide alerts instantly. |
-
-</div>
+**The Solution:** The **Addis Transport Tracking System** bridges the gap between daily commuters and transit authorities by providing an interactive ecosystem. It features a native Android app for passengers to track buses in real-time with multi-language support, and a high-performance React web dashboard for admins to oversee fleet operations, manage routes, and analyze system load.
 
 ---
 
-## 🚀 Today's Major Updates (May 17, 2026)
+## 🌟 Key Features & Recent Additions
 
-*   📧 **Secure Email OTP Pipeline**: Re-implemented the OTP email delivery using standard **JavaMail SSL (Port 465)**, fixing the "Could not convert socket to TLS" error. Enabled secure end-to-end delivery of 6-digit codes to user inboxes.
-*   🔒 **Secure OTP Flow**: Removed the on-screen helper code from the verification screen to ensure the security flow is authentic and the code is obtained exclusively from the user's inbox.
-*   👥 **Admin User List Fixed**: Removed `limit(2)` restriction in the admin dashboard query to ensure **all registered users** show up in real-time.
-*   🗑️ **Robust User Deletion**: Reorganized React hooks and fully repaired the 🗑️ **Delete User** action with prompt confirmation and direct Firestore synchronization. Secured administrator profiles from accidental deletion using case-insensitive check guards.
-
----
-
-## 🛠️ Architecture & Tech Stack
-
-### 📱 1. Mobile Passenger App (Native Android)
-Built for speed, reliability, and smooth animations even on lower-end devices.
-*   **Kotlin**: Google's official, highly-secure language preventing common crashes.
-*   **MVVM Architecture**: Separates UI from logic, ensuring the app never crashes during screen rotations.
-*   **Coroutines**: Handles heavy background tasks (like GPS polling) without freezing the UI.
-*   **Google Maps SDK**: Renders custom dynamic markers seamlessly.
-
-### 🌐 2. Web Admin Dashboard (React.js)
-A robust command center built to handle thousands of live data points.
-*   **React.js**: Component-based architecture for extremely fast map and data rendering without page reloads.
-*   **Tailwind CSS**: Utility-first styling for a beautiful, responsive, "Glassmorphism" enterprise aesthetic.
-*   **Context API**: Manages complex global states (like authenticated admin profiles).
-
-### ☁️ 3. Shared Backend
-*   **Firebase Firestore (NoSQL)**: Ultra-fast real-time database syncing across Web and Mobile simultaneously.
-*   **Firebase Auth**: Secure, role-based access control.
+*   🗺️ **Live Real-Time Map Integration**: 
+    *   **Android App**: Uses Google Maps SDK for smooth native bus tracking.
+    *   **Web Dashboard**: Integrated **Leaflet** maps dynamically via CDN to show live vehicle movement natively in React.
+*   🌍 **Dynamic Multi-Language Support**: Instantly switch between English, አማርኛ (Amharic), Afaan Oromoo, ትግርኛ (Tigrinya), and Somali without restarting the app using `AppCompatDelegate.setApplicationLocales`.
+*   👁️ **Accessibility Controls (Dark Mode & Font Scaling)**: 
+    *   Toggle **Dark/Light Theme** dynamically across the UI.
+    *   **Interactive Font Size Slider** scaling text from 50% to 150% universally using a custom `BaseActivity` configuration.
+*   📧 **Secure OTP Email Registration**: Utilizes **JavaMail API over SSL (Port 465)** to safely deliver 6-digit verification codes to users, completely securing the signup flow.
+*   📊 **Load Testing & Performance Monitoring**: Implemented **K6 Scripts** to simulate high-traffic concurrent user loads, ensuring the Firebase Firestore backend can handle peak hour tracking without failing.
+*   ⚡ **React + Vite Admin Dashboard**: Re-engineered the admin panel with Vite for blazing-fast Hot Module Replacement and highly responsive Tailwind styling.
 
 ---
 
-## 📂 Project Structure & Deep Dive
+## 🛠️ Required Tools & Tech Stack
 
-### The Android App (`app/src/main/`)
+To run and contribute to this project, you will need the following installed:
+
+*   **Android Studio** (Koala or newer recommended) for compiling the Kotlin Passenger App.
+*   **Node.js (v18+)** and **npm** for running the React/Vite Admin Dashboard.
+*   **K6 Load Testing Tool** to run database stress tests.
+*   **Firebase Account** configured with Authentication and Firestore Database.
+
+### Dependencies Included in Project
+*   **JavaMail API**: For OTP dispatching.
+*   **Google Maps SDK**: For native Android mapping.
+*   **Leaflet**: For web-based geographical mapping.
+*   **Tailwind CSS**: For Admin Dashboard UI styling.
+
+---
+
+## 📂 Full Project Folder Structure
+
 ```text
-app/src/main/
-├── java/.../transporttrackingsystem/
-│   ├── 📺 activities/  ➔ UI logic. Controls what happens when users interact with screens.
-│   ├── 🔌 adapters/    ➔ The bridge connecting raw Firestore data to visual lists (RecyclerViews).
-│   ├── 📦 models/      ➔ Data blueprints (e.g., shaping how a 'Bus' looks in code).
-│   ├── 🌐 network/     ➔ Secure API requests and Firebase listeners.
-│   ├── 🛠️ utils/       ➔ Reusable helpers (time formatting, distance calculation).
-│   └── 🧠 viewmodels/  ➔ State management. Keeps UI data safe during interruptions.
-└── res/                ➔ Visuals! XML layouts, icons, and Material Design themes.
-```
-
-### The React Dashboard (`admin-dashboard-web/src/`)
-```text
-admin-dashboard-web/src/
-├── 🖼️ assets/          ➔ Static files (Logos, premium fonts).
-├── 🧩 components/      ➔ Reusable UI blocks (Sidebars, metric cards, map overlays).
-├── 🌍 context/         ➔ Global state managers (User sessions).
-├── 🪝 hooks/           ➔ Custom logic (e.g., checking if an Admin is logged in).
-├── 📄 pages/           ➔ Full-screen dashboard views (Fleet Manager, Complaints).
-└── 🔧 utils/           ➔ Math and sorting algorithms for large data tables.
+TransportTrackingSystem/
+│
+├── 📱 app/ (Android Kotlin Application)
+│   ├── google-services.json      ➔ Firebase configuration keys.
+│   └── src/main/
+│       ├── java/com/example/transporttrackingsystem/
+│       │   ├── 📺 activities/    ➔ UI screens (MainActivity, SettingsActivity, BaseActivity).
+│       │   ├── 🔌 adapters/      ➔ RecyclerView bridges for lists.
+│       │   ├── 📦 models/        ➔ Data classes defining Users, Buses, etc.
+│       │   ├── 🌐 network/       ➔ Firebase interactions and API calls.
+│       │   ├── 🛠️ utils/         ➔ Helpers (EmailService, Distance calculation).
+│       │   └── 🧠 viewmodels/    ➔ MVVM logic separating UI from data.
+│       └── res/
+│           ├── drawable/         ➔ Icons, vector graphics, and backgrounds.
+│           ├── layout/           ➔ XML UI templates (activity_main.xml, etc).
+│           ├── values/           ➔ strings.xml (Translations), colors, themes.
+│           └── xml/              ➔ Network security configurations.
+│
+├── 💻 admin-dashboard-web/ (React Vite Application)
+│   ├── index.html                ➔ Main HTML entry point.
+│   ├── package.json              ➔ Node dependencies (React, Vite, Tailwind).
+│   ├── postcss.config.js         ➔ Tailwind CSS processor config.
+│   ├── tailwind.config.js        ➔ Custom themes and styling variables.
+│   └── src/
+│       ├── 🖼️ assets/            ➔ Static web assets.
+│       ├── 🧩 components/        ➔ Reusable UI (LiveMap, UserTable).
+│       ├── 🌍 context/           ➔ Global React Auth State.
+│       ├── 🪝 hooks/             ➔ Custom React Hooks.
+│       ├── 📄 pages/             ➔ Full-screen Dashboard routes.
+│       └── 🔧 utils/             ➔ Math/Time formatting.
+│
+├── ⚡ test.js                      ➔ K6 Load Testing Script for backend performance.
+└── 📝 README.md                  ➔ Project documentation.
 ```
 
 ---
 
 ## ⚙️ Setup & Installation
 
-### Running the Web Dashboard
+### 1. Running the Web Dashboard
 ```bash
 cd admin-dashboard-web
 npm install
 npm run dev
 ```
-*(Runs securely on localhost with hot-module reloading)*
+*(Runs securely on localhost via Vite with hot-module reloading)*
 
-### Running the Android App
+### 2. Running the Android App
 1. Open the root folder (`TransportTrackingSystem`) in **Android Studio**.
-2. Ensure your `google-services.json` is placed in the `app/` directory.
+2. Ensure your `google-services.json` is correctly placed in the `app/` directory.
 3. Click **Sync Project with Gradle Files**.
 4. Press **Run** (Shift+F10) on an emulator or physical device.
+
+### 3. Running the K6 Load Tests
+To verify database throughput and latency:
+```bash
+k6 run test.js
+```
+*(Ensures Firestore handles 50+ concurrent requests securely using the API Key).*
 
 ---
 

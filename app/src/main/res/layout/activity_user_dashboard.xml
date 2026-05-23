@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:text="System Analytics"
+                android:text="@string/system_analytics"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -72,7 +72,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Real-Time Operations"
+                android:text="@string/real_time_operations"
                 android:textColor="#555555"
                 android:textSize="13sp"
                 android:textStyle="bold"
@@ -121,7 +121,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Active Buses"
+                            android:text="@string/active_buses_label"
                             android:textColor="#D1E2FF"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -160,7 +160,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pending Issues"
+                            android:text="@string/pending_issues"
                             android:textColor="#FFE4D6"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -201,7 +201,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Routes"
+                            android:text="@string/routes"
                             android:textColor="#D7F5D9"
                             android:textSize="12sp" />
                     </LinearLayout>

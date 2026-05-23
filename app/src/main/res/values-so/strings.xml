@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Addis Transport</string>
+    <string name="forgot_password">Ma illowday erayga sirta ah?</string>
+    <string name="reset_password_title">Bedel Erayga Sirta</string>
+    <string name="enter_email_hint">Geli iimeylkaaga</string>
+    <string name="send">Dir</string>
+    <string name="cancel">Jooji</string>
+    
+    <!-- Auth Flow Strings -->
+    <string name="login">Gal</string>
+    <string name="email">Iimeyl</string>
+    <string name="password">Erayga sirta</string>
+    <string name="forgot_password_prompt">Ma illowday erayga sirta ah?</string>
+    <string name="no_account_register">Akoon ma lihid? Is diiwaan geli</string>
+
+    <string name="reset_password_desc">Geli ciwaanka iimeylkaaga, waxaan kuu soo diri doonaa link aad ku bedesho eraygaaga sirta ah.</string>
+    <string name="email_address">Ciwaanka Iimeylka</string>
+    <string name="send_reset_link">Dir Linkiga</string>
+
+    <string name="join_network">Ku soo biir shabakadda</string>
+    <string name="register">Is diiwaan geli</string>
+    <string name="full_name">Magaca Buuxa</string>
+    <string name="create_account">Samee Akoon</string>
+    <string name="already_have_account_login">Akoon ma leedahay? Gal</string>
+
+    <string name="ready_for_trip">Diyaar ma u tahay safarkaaga?</string>
+    <string name="welcome">Soo dhawaaw!</string>
+    <string name="didnt_get_email_resend">Iimeyl ma helin? Dib u dir</string>
+    <string name="get_started">Bilow</string>
+
+    <string name="system_analytics">Falanqaynta Nidaamka</string>
+    <string name="real_time_operations">Hawlgallada Wakhtiga Dhabta ah</string>
+    <string name="active_buses_label">Basaska Shaqeeya</string>
+    <string name="pending_issues">Arrimaha Sugaya</string>
+    <string name="routes">Jidadka</string>
+
+    <string name="system_online">● Nidaamku Wuu Shaqaynayaa</string>
+    <string name="where_to">Xaggee baad u socotaa?</string>
+    <string name="current_station">Xarunta Hadda</string>
+    <string name="destination">Meesha Loo Socdo</string>
+    <string name="find_fast_route">Raadi Waddo Degdeg ah</string>
+    <string name="nearby_buses">Basaska Agagaarka</string>
+    <string name="nav_dashboard">Daashboodhka</string>
+    <string name="nav_live_tracking">Raadraaca Baska Tooska ah</string>
+    <string name="nav_routes">Jidadka</string>
+    <string name="nav_traffic_news">Wararka Taraafikada</string>
+    <string name="nav_feedback">Dir Fikrad / Cabasho</string>
+    <string name="nav_notifications">Ogeysiisyada</string>
+    <string name="nav_settings">Dejinta</string>
+    <string name="nav_sign_out">Ka bax</string>
+</resources>

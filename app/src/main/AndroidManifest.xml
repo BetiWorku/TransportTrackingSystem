@@ -57,33 +57,33 @@
             </intent-filter>
         </activity>
 
-        <!-- 🚀 WELCOME PAGE -->
+        <!--  WELCOME PAGE -->
         <activity android:name=".activities.WelcomeActivity" />
 
-        <!-- 🚀 REGISTER ACTIVITY -->
+        <!--  REGISTER ACTIVITY -->
         <activity android:name=".activities.RegisterActivity" />
 
-        <!-- 🚀 OTP VERIFICATION ACTIVITY -->
+        <!--  OTP VERIFICATION ACTIVITY -->
         <activity android:name=".activities.OtpVerificationActivity" />
 
-        <!-- 🚀 MAIN MAP ACTIVITY -->
+        <!--  MAIN MAP ACTIVITY -->
         <activity 
             android:name=".activities.MainActivity"
             android:exported="false" />
 
-        <!-- 🚀 SETTINGS ACTIVITY -->
+        <!--  SETTINGS ACTIVITY -->
         <activity android:name=".activities.SettingsActivity" />
 
-        <!-- 🚀 BUS DETAILS ACTIVITY -->
+        <!--  BUS DETAILS ACTIVITY -->
         <activity android:name=".activities.BusDetailsActivity" />
 
-        <!-- 🚀 NEWS ACTIVITY -->
+        <!--  NEWS ACTIVITY -->
         <activity android:name=".activities.UserNewsActivity" />
 
-        <!-- 🚀 BUS TRACKER ACTIVITY -->
+        <!--  BUS TRACKER ACTIVITY -->
         <activity android:name=".activities.BusTrackerActivity" />
 
-        <!-- 🚀 COMPLAINT ACTIVITY -->
+        <!--  COMPLAINT ACTIVITY -->
         <activity 
             android:name=".activities.ComplaintActivity"
             android:parentActivityName=".activities.MainActivity" />

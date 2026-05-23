@@ -12,6 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Context
+import android.widget.Spinner
+import android.widget.ArrayAdapter
+import android.widget.AdapterView
 
 class LoginActivity : AppCompatActivity() {
 
@@ -154,6 +158,33 @@ class LoginActivity : AppCompatActivity() {
 
         tvRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
+        // Language Spinner Logic
+        val sharedPref = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        val spinnerLanguageLogin = findViewById<Spinner>(R.id.spinnerLanguageLogin)
+        val languages = arrayOf("English", "Amharic", "Afaan Oromoo", "Tigrinya", "Somali")
+        val languageCodes = arrayOf("en", "am", "om", "ti", "so")
+        val langAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
+        langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerLanguageLogin.adapter = langAdapter
+
+        val savedLangCode = sharedPref.getString("Language", "en")
+        spinnerLanguageLogin.setSelection(languageCodes.indexOf(savedLangCode).takeIf { it >= 0 } ?: 0)
+
+        spinnerLanguageLogin.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: android.view.View?, position: Int, id: Long) {
+                val selectedLangCode = languageCodes[position]
+                val currentSavedLangCode = sharedPref.getString("Language", "en")
+                if (selectedLangCode != currentSavedLangCode) {
+                    sharedPref.edit().putString("Language", selectedLangCode).apply()
+                    Toast.makeText(this@LoginActivity, "Language changed to ${languages[position]}.", Toast.LENGTH_SHORT).show()
+                    
+                    val localeList = androidx.core.os.LocaleListCompat.forLanguageTags(selectedLangCode)
+                    androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(localeList)
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
 }

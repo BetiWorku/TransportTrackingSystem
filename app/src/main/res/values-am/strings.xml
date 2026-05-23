@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">አዲስ ትራንስፖርት (Addis Transport)</string>
+    <string name="forgot_password">ሚስጥር ቁጥር ረስተዋል?</string>
+    <string name="reset_password_title">ሚስጥር ቁጥር ይቀይሩ</string>
+    <string name="enter_email_hint">የተመዘገቡበትን ኢሜይል ያስገቡ</string>
+    <string name="send">ላክ</string>
+    <string name="cancel">ሰርዝ</string>
+    
+    <!-- Auth Flow Strings -->
+    <string name="login">ግባ</string>
+    <string name="email">ኢሜይል</string>
+    <string name="password">ሚስጥር ቁጥር</string>
+    <string name="forgot_password_prompt">ሚስጥር ቁጥር ረስተዋል?</string>
+    <string name="no_account_register">መለያ የሎትም? ይመዝገቡ</string>
+
+    <string name="reset_password_desc">የኢሜይል አድራሻዎን ያስገቡ፤ ሚስጥር ቁጥርዎን ለመቀየር ሊንክ እንልክልዎታለን።</string>
+    <string name="email_address">የኢሜይል አድራሻ</string>
+    <string name="send_reset_link">መቀየሪያ ሊንክ ላክ</string>
+
+    <string name="join_network">አውታረ መረቡን ይቀላቀሉ</string>
+    <string name="register">ይመዝገቡ</string>
+    <string name="full_name">ሙሉ ስም</string>
+    <string name="create_account">አካውንት ፍጠር</string>
+    <string name="already_have_account_login">አካውንት አለዎት? ይግቡ</string>
+
+    <string name="ready_for_trip">ለጉዞዎ ዝግጁ ነዎት?</string>
+    <string name="welcome">እንኳን ደህና መጡ!</string>
+    <string name="didnt_get_email_resend">ኢሜይል አልደረስዎትም? በድጋሚ ላክ</string>
+    <string name="get_started">ጀምር</string>
+
+    <string name="system_analytics">የሲስተም ትንታኔ</string>
+    <string name="real_time_operations">የወቅታዊ አሰራሮች</string>
+    <string name="active_buses_label">በስራ ላይ ያሉ አውቶቡሶች</string>
+    <string name="pending_issues">የሚጠባበቁ ጉዳዮች</string>
+    <string name="routes">መስመሮች</string>
+
+    <string name="system_online">● ሲስተም ይሰራል</string>
+    <string name="where_to">ወዴት ነው?</string>
+    <string name="current_station">ያሉበት ጣቢያ</string>
+    <string name="destination">መድረሻ ጣቢያ</string>
+    <string name="find_fast_route">ፈጣን መስመር ፈልግ</string>
+    <string name="nearby_buses">በአቅራቢያ ያሉ አውቶቡሶች</string>
+    <string name="nav_dashboard">ዳሽቦርድ</string>
+    <string name="nav_live_tracking">የአውቶቡስ ቀጥታ ክትትል</string>
+    <string name="nav_routes">መስመሮች</string>
+    <string name="nav_traffic_news">የትራፊክ መረጃ</string>
+    <string name="nav_feedback">አስተያየት / ቅሬታ</string>
+    <string name="nav_notifications">ማሳወቂያዎች</string>
+    <string name="nav_settings">ቅንብሮች</string>
+    <string name="nav_sign_out">ውጣ</string>
+</resources>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ኣዲስ ትራንስፖርት</string>
+    <string name="forgot_password">ፓስዎርድ ረሲዕካዶ?</string>
+    <string name="reset_password_title">ፓስዎርድ ቀይር</string>
+    <string name="enter_email_hint">ዝተመዝገበ ኢመይል ኣእቱ</string>
+    <string name="send">ስደድ</string>
+    <string name="cancel">ሰርዝ</string>
+    
+    <!-- Auth Flow Strings -->
+    <string name="login">እቶ</string>
+    <string name="email">ኢመይል</string>
+    <string name="password">ፓስዎርድ</string>
+    <string name="forgot_password_prompt">ፓስዎርድ ረሲዕካዶ?</string>
+    <string name="no_account_register">ኣካውንት የብልካን? ተመዝገብ</string>
+
+    <string name="reset_password_desc">ናይ ኢመይል ኣድራሻኻ ኣእቱ፤ ፓስዎርድካ ንምቕያር ዝሕግዝ ሊንክ ክንሰደልካ ኢና።</string>
+    <string name="email_address">ኣድራሻ ኢመይል</string>
+    <string name="send_reset_link">ናይ ምቕያር ሊንክ ስደድ</string>
+
+    <string name="join_network">ኣብቲ መርበብ ተጸንበር</string>
+    <string name="register">ተመዝገብ</string>
+    <string name="full_name">ምሉእ ስም</string>
+    <string name="create_account">ኣካውንት ፍጠር</string>
+    <string name="already_have_account_login">ኣካውንት ኣለካ? እቶ</string>
+
+    <string name="ready_for_trip">ንጉዕዞኹም ድሉው ዲኹም?</string>
+    <string name="welcome">እንቋዕ ብድሓን መጻእኩም!</string>
+    <string name="didnt_get_email_resend">ኢመይል ኣይበጽሓኩምን? ዳግማይ ስደድ</string>
+    <string name="get_started">ጀምር</string>
+
+    <string name="system_analytics">ትሕዝቶ ሲስተም</string>
+    <string name="real_time_operations">እዋናዊ ስርሓት</string>
+    <string name="active_buses_label">ኣብ ስራሕ ዘለዉ ኣውቶቡሳት</string>
+    <string name="pending_issues">ዝጽበዩ ዘለዉ ጉዳያት</string>
+    <string name="routes">መስመራት</string>
+
+    <string name="system_online">● ሲስተም ይሰርሕ ኣሎ</string>
+    <string name="where_to">ናበይ እዩ?</string>
+    <string name="current_station">ዘለኹምሉ ጣብያ</string>
+    <string name="destination">መዓርፎ</string>
+    <string name="find_fast_route">ቕልጡፍ መስመር ድለ</string>
+    <string name="nearby_buses">ኣብ ጥቓ ዘለዉ ኣውቶቡሳት</string>
+    <string name="nav_dashboard">ዳሽቦርድ</string>
+    <string name="nav_live_tracking">ቀጥታ ክትትል ኣውቶቡስ</string>
+    <string name="nav_routes">መስመራት</string>
+    <string name="nav_traffic_news">ዜና ትራፊክ</string>
+    <string name="nav_feedback">ርእይቶ / ጥርዓን ስደድ</string>
+    <string name="nav_notifications">መፍለጢታት</string>
+    <string name="nav_settings">ቅንብራት</string>
+    <string name="nav_sign_out">ውፃእ</string>
+</resources>

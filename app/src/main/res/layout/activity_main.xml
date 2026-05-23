@@ -68,7 +68,7 @@
                     android:id="@+id/tvLiveStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="● System Online"
+                    android:text="@string/system_online"
                     android:textColor="#4CAF50"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -277,7 +277,7 @@
                     android:id="@+id/tvWhereTo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Where to?"
+                    android:text="@string/where_to"
                     android:textSize="@dimen/text_xlarge"
                     android:textStyle="bold"
                     android:textColor="#333333"
@@ -290,7 +290,7 @@
                     android:background="@drawable/bg_input_field"
                     android:drawableStart="@android:drawable/ic_menu_myplaces"
                     android:drawablePadding="@dimen/padding_medium"
-                    android:hint="Current Station"
+                    android:hint="@string/current_station"
                     android:paddingHorizontal="@dimen/padding_large"
                     android:textColor="#000000"
                     android:textColorHint="#757575"
@@ -305,7 +305,7 @@
                     android:background="@drawable/bg_input_field"
                     android:drawableStart="@android:drawable/ic_menu_send"
                     android:drawablePadding="@dimen/padding_medium"
-                    android:hint="Destination"
+                    android:hint="@string/destination"
                     android:paddingHorizontal="@dimen/padding_large"
                     android:textColor="#000000"
                     android:textColorHint="#757575"
@@ -317,7 +317,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_height"
                     android:layout_marginTop="@dimen/padding_large"
-                    android:text="Find Fast Route"
+                    android:text="@string/find_fast_route"
                     android:textAllCaps="false"
                     android:textSize="@dimen/text_large"
                     android:textStyle="bold"
@@ -372,7 +372,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Nearby Buses"
+                    android:text="@string/nearby_buses"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:textColor="#2196F3"/>
@@ -524,7 +524,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Dashboard"
+                                android:text="@string/nav_dashboard"
                                 android:textColor="#333333"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -549,7 +549,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Live Bus Tracking"
+                                android:text="@string/nav_live_tracking"
                                 android:textColor="#333333"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -574,7 +574,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Routes"
+                                android:text="@string/nav_routes"
                                 android:textColor="#333333"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -599,7 +599,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Traffic News"
+                                android:text="@string/nav_traffic_news"
                                 android:textColor="#333333"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -624,7 +624,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Send Feedback / Complaint"
+                                android:text="@string/nav_feedback"
                                 android:textColor="#333333"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -649,7 +649,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Notifications"
+                                android:text="@string/nav_notifications"
                                 android:textColor="#333333"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -674,7 +674,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Settings"
+                                android:text="@string/nav_settings"
                                 android:textColor="#333333"
                                 android:textSize="15sp" />
                         </LinearLayout>
@@ -705,7 +705,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
-                                android:text="Sign Out"
+                                android:text="@string/nav_sign_out"
                                 android:textColor="#D32F2F"
                                 android:textStyle="bold"
                                 android:textSize="15sp" />

@@ -70,7 +70,7 @@ import android.graphics.Typeface
 import android.view.Gravity
 import androidx.core.view.isVisible
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : BaseActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var db: FirebaseFirestore

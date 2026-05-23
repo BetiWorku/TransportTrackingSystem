@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
-class UserDashboardActivity : AppCompatActivity() {
+class UserDashboardActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth

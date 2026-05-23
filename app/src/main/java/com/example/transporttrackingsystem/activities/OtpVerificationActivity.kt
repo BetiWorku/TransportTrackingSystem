@@ -107,17 +107,10 @@ class OtpVerificationActivity : AppCompatActivity() {
                         
                         db.collection("users").document(userId).update(updates)
                             .addOnSuccessListener {
-                                // Show Premium Success Alert and navigate to Login
+                                // Show Premium Success Alert and navigate to Welcome automatically
                                 btnVerifyOtp.text = "Verified!"
-                                AlertDialog.Builder(this)
-                                    .setTitle("Verification Successful")
-                                    .setMessage("Your email address has been successfully verified! You can now log in to your account.")
-                                    .setCancelable(false)
-                                    .setPositiveButton("Proceed to Login") { _, _ ->
-                                        auth.signOut()
-                                        navigateToLogin()
-                                    }
-                                    .show()
+                                Toast.makeText(this@OtpVerificationActivity, "Verification Successful!", Toast.LENGTH_SHORT).show()
+                                navigateToWelcome()
                             }
                             .addOnFailureListener { e ->
                                 btnVerifyOtp.isEnabled = true
@@ -183,6 +176,13 @@ class OtpVerificationActivity : AppCompatActivity() {
                 tvResendOtp.setTextColor(android.graphics.Color.parseColor("#2196F3"))
             }
         }.start()
+    }
+
+    private fun navigateToWelcome() {
+        val intent = Intent(this, WelcomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun navigateToLogin() {
