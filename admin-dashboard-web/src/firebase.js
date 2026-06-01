@@ -2,13 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
+// Firebase config loaded securely from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyAriK7OD7nejhp4_Db3tgpsnh0TuQhttHg",
-  authDomain: "transportation-tracker-app.firebaseapp.com",
-  projectId: "transportation-tracker-app",
-  storageBucket: "transportation-tracker-app.firebasestorage.app",
-  messagingSenderId: "802991968990",
-  appId: "1:802991968990:web:44f07e1f48b74ed1b1b2d135a139c204" // Standard format
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
