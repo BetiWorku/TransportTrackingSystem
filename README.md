@@ -14,6 +14,18 @@
 
 ---
 
+## 🎬 App Demo Video
+
+<div align="center">
+
+https://github.com/BetiWorku/TransportTrackingSystem/raw/main/Transport%20App%20Demo%20(1).mp4
+
+> *Full walkthrough of the Addis Transport Tracking System — User app + Admin Dashboard*
+
+</div>
+
+---
+
 ## 📲 Download & Install the App (For Students)
 
 > **Teacher's Requirement:** Every project submission must include a compiled `.apk` file in the repository.
