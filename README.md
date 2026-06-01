@@ -137,9 +137,9 @@ npm run dev
 
 ## 🎥 Application Demo Video
 
-
 https://github.com/user-attachments/assets/3a9c76af-6f89-4b4d-8aad-1cb3d0c1947f
 
-
-
-BetiWorku/TransportTrackingSystem/raw/main/Transport%20App%20Demo%20(1).mp4
+<div align="center">
+  <b>Developed for Addis Ababa Transport Management.</b><br>
+  <i>Empowering commuters with data, one ride at a time.</i>
+</div>
