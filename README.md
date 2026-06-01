@@ -12,19 +12,6 @@
 </div>
 
 
----
-
-## 🎬 App Demo Video
-
-<div align="center">
-
-https://github.com/BetiWorku/TransportTrackingSystem/raw/main/Transport%20App%20Demo%20(1).mp4
-
-> *Full walkthrough of the Addis Transport Tracking System — User app + Admin Dashboard*
-
-</div>
-
----
 
 ## 📲 Download & Install the App (For Students)
 
@@ -147,23 +134,5 @@ k6 run test.js
 ```
 *(Ensures Firestore handles 50+ concurrent requests securely using the API Key).*
 
----
-
-## 📸 Visual Gallery
-
-### 🚶 User Application Flow
-| Welcome | Login | Live Map Tracking |
-| :---: | :---: | :---: |
-| <img src="Screenshots/User/2_App_Starts.jpg" width="200"/> | <img src="Screenshots/User/4_Login_Page.jpg" width="200"/> | <img src="Screenshots/User/13_Track_Live_Anbesa_Bus.jpg" width="200"/> |
-
-### 👨‍💼 Admin Command Center
-| Main Dashboard | Fleet Statistics | Route Configuration |
-| :---: | :---: | :---: |
-| <img src="Screenshots/Admin/3_Fleet_Main_Dashboard.jpg" width="250"/> | <img src="Screenshots/Admin/4_Fleet_Statics.jpg" width="250"/> | <img src="Screenshots/Admin/6_Manage_Terminal.jpg" width="250"/> |
-
-<hr/>
-
-<div align="center">
-  <b>Developed for Addis Ababa Transport Management.</b><br>
-  <i>Empowering commuters with data, one ride at a time.</i>
-</div>
+--- App Demo Video
+https://github.com/BetiWorku/TransportTrackingSystem/raw/main/Transport%20App%20Demo%20(1).mp4
