@@ -9,6 +9,11 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+
+# Allow compiled release APK to be tracked in Git
+!app/build/outputs/apk/debug/*.apk
+!app/build/outputs/apk/release/*.apk
+!release/*.apk
 /captures
 .externalNativeBuild
 .cxx
@@ -17,4 +22,3 @@ local.properties
 # Firebase & Secrets
 /app/google-services.json
 /test.js
-/C:/Users/hp/AndroidStudioProjects/TransportTrackingSystem/app/google-services.json

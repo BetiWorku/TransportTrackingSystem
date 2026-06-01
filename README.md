@@ -11,9 +11,28 @@
   [![K6](https://img.shields.io/badge/K6-Load_Testing-7D64FF?style=for-the-badge&logo=k6&logoColor=white)]()
 </div>
 
-<hr/>
 
-## 🎯 Problem & Solution
+---
+
+## 📲 Download & Install the App (For Students)
+
+> **Teacher's Requirement:** Every project submission must include a compiled `.apk` file in the repository.
+
+| Download | Version | Min Android |
+| :---: | :---: | :---: |
+| [⬇️ **TransportTrackingSystem-v1.0.apk**](./release/TransportTrackingSystem-v1.0.apk) | v1.0 | Android 8.0 (API 26+) |
+
+### How to Install on Your Android Device:
+1. **Download** the `.apk` file from the `release/` folder above.
+2. On your Android phone, go to **Settings → Security → Unknown Sources** and enable it.
+3. Open the downloaded `.apk` file and tap **Install**.
+4. Grant the requested permissions (Location, Internet) and launch the app.
+
+> ⚠️ **Note for Reviewers:** If the APK file is not yet in the `release/` folder, please build it from source using Android Studio (`Build → Build APK(s)`) and place it there.
+
+---
+
+
 
 **The Problem:** Commuters in Addis Ababa often face unpredictable bus schedules, long wait times, and a lack of real-time transit information. Furthermore, public transport administrators lack a unified system to track fleet movements, manage delays, and communicate with users dynamically.
 
